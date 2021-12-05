@@ -1,0 +1,45 @@
+
+inserindo virtual scroll aplication angular
+
+1º: Executar o comando: yarn add @angular/cdk
+
+2º: importar a seguinte linha no component.ts:  @ViewChild('scroller') scroller: CdkVirtualScrollViewport;
+
+3º: colar o seguinte comando no ngOnit (alrações no async, await e no nome da função passada, neste caso vai seo BuscarRamais()
+
+this.scroller.elementScrolled().pipe(
+      map(() => this.scroller.measureScrollOffset('bottom')),
+      pairwise(),
+      filter(([y1, y2]) => (y2 < y1 && y2 < 140)),
+      throttleTime(200)
+    ).subscribe(() => {
+      this.ngZone.run(async() => {
+        this.nr_Page++
+        await this.Buscar_Ramais();  //sempre que atualizar a lista tem que retornar uma nova instancia da lista
+      });
+    })
+
+
+	*referente ao comentário assim: this.objArrayRamais = [...this.objArrayRamais, ...await this.ramaisService.Get_Ramais(objParams)]
+	*eu to chamando a propria lista dentro dela regando assim uma nova instancia
+	*lembrar eu toda função de filtro zerar a lista dando um this.objArrayRamais = []
+
+4º alterar o nome da DIV (pai) da listagem no HTML para: cdk-virtual-scroll-viewport, e o ngFor para: *cdkVirtualFor
+
+
+5º colocar o valor da altura dos itens da listagem na mesma DIV (pai), no caso a altura de cada card era 56px, então ficou:
+[itemSize]="56"
+
+
+6º caso a listagem bugue, utilize  minBufferPx="600" maxBufferPx="600" também no HTML, isso manipula o cache. Os valores
+ de 600 podem ser alterados.
+
+
+Exemplo de como ficou o HTML: 
+
+ <cdk-virtual-scroll-viewport [itemSize]="56" minBufferPx="600" maxBufferPx="600" class="mx-5 h-full px-5 md:px-20 lg:px-20 pt-4 lg:pt-8">
+
+
+
+
+
