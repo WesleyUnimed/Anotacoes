@@ -1,0 +1,59 @@
+INICIAR O GIT, PRIMEIROS PASSOS
+
+git init 
+
+*sempre lembrar do .gitignore (node_modules)*
+
+git add .
+
+git commit -m "primeiro commit"
+
+git remote add origin <link do repositorio>
+-----------------------------------------------------------------------------------------------------------------
+
+ALTERAR O LINK DO REPOSITORIO
+
+git remote remove
+
+git remote add origin <link do repositorio>
+-------------------------------------------------------------------------------------
+
+COMANDOS IMPORTANTES
+
+git remote
+
+git remote -v
+
+git status
+-------------------------------------------------------------------------------------
+
+
+CRIANDO UMA NOVA BRENCH 
+
+git checkout -b brench-novo
+
+git add . 
+
+git commit -m "nome do commit"
+
+git push origin brench-novo
+-------------------------------------------------------------------------------------
+
+VOLTANDO NAVEGANDO ENTRE AS BRENCH'S
+
+git checkout main
+-------------------------------------------------------------------------------------
+
+MERGE DE BRENCH'S
+
+git checkout main
+
+git merge brench-novo
+
+git add .
+
+git commit -m "commit-merge"
+
+git push origin main
+
+
