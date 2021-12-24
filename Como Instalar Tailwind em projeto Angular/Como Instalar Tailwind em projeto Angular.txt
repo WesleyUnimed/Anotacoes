@@ -1,0 +1,23 @@
+Como Instalar Tailwind em projeto Angular 12.0 +
+
+1: npm install -D tailwindcss
+
+2: npm install postcss@latest autoprefixer@latest
+
+3: Crie o arquivo na raiz com o seguinte nome: tailwind.config.js
+
+dentro desse aquivo", cole:
+
+module.exports = {
+  content: ["./src/**/*.{html,js}"],
+  theme: {
+    extend: {},
+  },
+  plugins: [],
+}
+
+4: importar no arquivo Styles.scss:
+
+@import "tailwindcss/base";
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";
