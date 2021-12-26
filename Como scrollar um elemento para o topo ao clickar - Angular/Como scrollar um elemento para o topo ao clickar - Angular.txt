@@ -1,0 +1,11 @@
+Como scrollar um elemento para o topo ao clickar em um botão - Angular
+
+1: No HTML, coloque uma #tag (EX.: #scroll)na DIV onde tiver o
+overflow-y-auto
+
+2: No arquivo TypeScript, adicione:
+@ViewChild('scroll') scroll: ElementRef
+
+3: Na mesma DIV, adicione uma função (click) que refencie um métedo que terá a seguinte lógica:
+
+this.scroll.nativeElement.scrollTo(0,0)

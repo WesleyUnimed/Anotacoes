@@ -1,0 +1,37 @@
+Passando um parâmetro para ser usado como filtro
+
+Contexto: no contexto, eu tenho um *ngFor que ta percorrendo um array contendo obejtos e esses objetos tem sua propriedades(nm_Grupo_CEQ, cd_Setor ... etc.), o meu objetivo é quando eu clicar eu usar o código do setor(cd_Setor) para fazer a busca pelos documentos daquele setor.
+
+
+1: na Div desejada no HTML, adicione uma funçao de (click) que vai receber um ex.: (click)="Buscar_Setor(item)". O parâmetro "item" é o objeto do *ngFor. (Quando você clicar você vai estar pegando aquele item específico que você clickou e desse item voce pode solicitar o 
+cd_Setor desse item que voce clickou)
+
+
+2: No TypeScrip, crie uma variável global. Dentro da função Buscar_Setor vai ficar da segunte forma:
+------------------------------------------------------------------
+Buscar_Setor(obj: any){
+
+this.variavelglobal = obj.cd_Setor
+}
+------------------------------------------------------------------
+dessa forma a variávelglobal tem o código do setor do exato item que voce clickou.
+
+
+3: Agora você tem que passar essa varialglobal como parâmetro na Função de Busca. No caso eu referenciei essa variável no arquivo DocumentoParams e passai juntamento no objeto dentro da função de busca.
+
+
+4: No Nest(Graphql) você só precisa adicionar esse parâmetro no aquivo Params e seguir pro C#
+
+
+5: NO C# você vai acrescentar esse parâmetro no Model, no arquivo que contém os demais pâmetros.Essa mesma classe do Model será refenciada como parâmetro da função que faz o select. Ex: Get_Listagem(DocumentoForm objform). Use finalmente o parâmetro que foi trago la do Front para fazer a lógica de fitlragem no Select, ele é referenciado utilizando um @ na frente. Dentro do using => new (logo abaixo do mesmo método) também o referencie.
+
+
+
+
+
+
+
+
+
+
+
