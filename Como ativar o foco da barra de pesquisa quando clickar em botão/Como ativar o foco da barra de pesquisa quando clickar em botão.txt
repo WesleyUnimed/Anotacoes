@@ -1,0 +1,57 @@
+Como dar um foco na barra de pesquisa quando clickar em um botão (Angular)
+
+
+Contexto:Eu tenho um barra de pesquisa componentizada e eu quero que quando clicar no botão de limpar filtros no componente pai, essa barra de pesquisa receba um foco para o usuário ja digitar a busca sem precisar clickar na barra.
+
+
+Primeiro: No input da barra que pesquisa coloque uma tag, ex.: #search,
+por via das dúvidas coloque também: id="search" nome="search"
+
+
+
+Segundo: No componente, adicione o @ViewChild referenciando essa tag, ex: 
+	@ViewChild('search') seach_Element: ElementRef
+
+
+
+Terceiro: criar um Input de uma variável boolena que vai servir para monitorarmos quando seu valor for alterado e quando for daremos o foco. ex.:
+
+	@Input() b_Focus: boolean = false
+
+
+
+Quarto: Implementar o OnChanges na class e fazer da seguinte forma:
+
+	NgOnChanges(changes: SimpleChanges){
+	     if(this.b_Focus.currentValue){
+		this.seach_Element.NativeElement.focus()
+	   }
+	}
+
+
+Quinto: Na tag da barra no componente pai, o b_Focus vai receber uma propriedate também booleana que essa, vai ser alterada o valor em função que desejamos, no caso na de limpar filtros. Ex.:
+
+	<uni-search-bar [b_Focus]="b_Search_Focus" ></uni-search-bar>
+
+
+Sexto: Declare essa propriedade no arquivo TS do componente pai. Ex.:
+
+	b_Search_Focus: boolean = false 
+
+
+Sétimo(último): Agora, altere o valor desse b_Search_Focus para true quando quiser aplicar a lógica, no meu caso ficou assim:
+
+	async Limpar_Filtros() {
+        	this.b_Search_Focus = true
+
+			.
+			.
+			.
+		}
+
+
+Você é Incrível :DDDD
+
+
+
+			

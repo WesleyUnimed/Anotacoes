@@ -5,7 +5,7 @@ inserindo virtual scroll aplication angular
 
 2º: importar a seguinte linha no component.ts:  @ViewChild('scroller') scroller: CdkVirtualScrollViewport;
 
-3º: colar o seguinte comando no ngOnit (alrações no async, await e no nome da função passada, neste caso vai seo BuscarRamais()
+3º: colar o seguinte comando no ngOnit (alrações no async, await e no nome da função passada, neste caso vai ser o BuscarRamais()
 
 this.scroller.elementScrolled().pipe(
       map(() => this.scroller.measureScrollOffset('bottom')),
@@ -20,9 +20,10 @@ this.scroller.elementScrolled().pipe(
     })
 
 
-	*referente ao comentário assim: this.objArrayRamais = [...this.objArrayRamais, ...await this.ramaisService.Get_Ramais(objParams)]
-	*eu to chamando a propria lista dentro dela regando assim uma nova instancia
-	*lembrar eu toda função de filtro zerar a lista dando um this.objArrayRamais = []
+	*referente ao comentário assim: 
+this.objArrayRamais = [...this.objArrayRamais, ...await this.ramaisService.Get_Ramais(objParams)]
+	*eu to chamando a propria lista dentro dela trazendo assim uma nova instancia
+	*lembrar que toda função de filtro tem que zerar a lista dando um this.objArrayRamais = []
 
 4º alterar o nome da DIV (pai) da listagem no HTML para: cdk-virtual-scroll-viewport, e o ngFor para: *cdkVirtualFor
 
