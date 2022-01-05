@@ -1,0 +1,23 @@
+
+Contexto: Eu tenho uma barra de pesquisa componentizada no Angular e eu quero que, quando eu clickar em um botão no meu componente pai, a barra de pesquisa receba o Focus()
+
+
+Primeiro: No input da barra de pesquisa adicione #search
+
+
+Segundo: No arquivo TypeScript da Barra de pesquisa adicione um viewChild, Ex.:
+
+	@ViewChild('search')search_Input: ElementRef
+
+
+Teceiro: No TypeScript do componente pai, também adicione um viewChild que vai acessar o componente da barra de pesquisa, Ex.:
+
+	@ViewChild('SearchBarComponent') SearchFocus: SearchBarComponent
+
+
+Quarto: Aplique a seguinte lógica na função que deseja, no caso vai ser em um botão:
+
+	this.SearchFocus.search_Input.nativeElement.focus()
+
+
+show de bola :DD
