@@ -1,0 +1,11 @@
+
+Como instalar Angular Material
+
+
+Comando: ng add @angular/material
+
+
+seguir os passos, não tem erro
+
+
+Dica: Sempre que for pegar os componentes lembrar de fazer as importações no app_module
