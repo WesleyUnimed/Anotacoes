@@ -20,4 +20,11 @@ Quarto: Aplique a seguinte lógica na função que deseja, no caso vai ser em um
 	this.SearchFocus.search_Input.nativeElement.focus()
 
 
+**Se der erro no console, basta adicionar um setTimeout da seguinte forma:
+
+	setTimeout(() => {
+          this.search_element.searchElement.nativeElement.focus()
+        }, 0);
+
+
 show de bola :DD
