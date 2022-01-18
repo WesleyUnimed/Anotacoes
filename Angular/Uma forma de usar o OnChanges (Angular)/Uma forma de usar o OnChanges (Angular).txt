@@ -22,7 +22,7 @@ Terceiro: criar um Input de uma variável boolena que vai servir para monitorarm
 
 Quarto: Implementar o OnChanges na class e fazer da seguinte forma:
 
-	NgOnChanges(changes: SimpleChanges){
+	ngOnChanges(changes: SimpleChanges){
 	     if(this.b_Focus.currentValue){
 		this.seach_Element.NativeElement.focus()
 	   }
