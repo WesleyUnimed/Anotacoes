@@ -1,0 +1,30 @@
+implements: AfterViewInit, DoCheck, OnChanges, OnDestroy, AfterContentInit, AfterContentChecked, AfterViewChecked
+
+
+ngAfterViewInit() {
+        console.log('ngAfterViewInit');
+    }
+
+    ngDoCheck() {
+        console.log('ngDoCheck');
+    }
+
+    ngOnChanges() {
+        console.log('ngOnChanges');
+    }
+
+    ngOnDestroy() {
+        console.log('ngOnDestroy');
+    }
+
+    ngAfterContentInit() {
+        console.log('ngAfterContentInit');
+    }
+
+    ngAfterContentChecked() {
+        console.log('ngAfterContentChecked');
+    }
+
+    ngAfterViewChecked() {
+        console.log('ngAfterViewChecked');
+    }
