@@ -1,0 +1,1 @@
+fecha todos os VSCode e incia de novo, bug do terminal

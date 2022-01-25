@@ -1,0 +1,5 @@
+esse erro foi causado após execução do comando: yarn add @angular/cdk
+
+eu já tinha o cdk instalado e instalei novamente :D
+
+o que solucionou foi igualar as versões do cdk com o Angular no arquivo packet.json, parar a execução e rodar o comando yarn

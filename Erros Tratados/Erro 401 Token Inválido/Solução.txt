@@ -1,0 +1,3 @@
+Esse erro foi ocasionado após a linha de códio: @UseGuards(JwtAuthGuard) 
+
+No arquivo Resolver ser descomentado, ele código verifica de se o usuário está logado mas como na minha aplicação não tem isso deu o erro de "Token Inválido" acusando: reading 'replace'
