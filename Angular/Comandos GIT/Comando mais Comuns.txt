@@ -55,5 +55,19 @@ git add .
 git commit -m "commit-merge"
 
 git push origin main
+-------------------------------------------------------------------------------------
 
+VOLTANDO PARA UM COMMIT ESPECÍFICO
+
+$ git reflog
+# mostra uma lista de todos commits realizados recentemente
+67d0673 (HEAD -> master, origin/master, origin/HEAD) HEAD@{0}: commit: Adiciona footer
+a76b759 HEAD@{1}: Fast forward branch master to branch master
+aa4a59c HEAD@{2}: commit: Ajustes gerais em CSS
+7f13308 HEAD@{3}: commit: Adicionando HTML e CSS
+dc206da HEAD@{4}: commit: Commit inicial
+
+
+$ git reset HEAD@{2}
+# neste caso voltamos para o commit 'Ajustes gerais em CSS'
 
