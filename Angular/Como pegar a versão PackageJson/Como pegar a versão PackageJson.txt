@@ -1,0 +1,22 @@
+Como Pegar a versão da aplicação Angular package.json
+
+
+1° Eu optei por criar um componente para não ter que repetir o código, então crie um componente: (ng g c verson --skip-import) e crie o módulo desse componente e faças as devidas importações do mesmo nos demais componentes que for utilizar.
+
+
+2° Dentro desse componente no arquivo .ts, cole o import:
+
+import packageInfo from '../../../../package.json';
+
+
+3° Cole logo abaixo:
+
+version: string = packageInfo.version
+
+
+4° no html coloque dessa forma:
+
+<div> {{version}}</div>
+
+
+Pronto, você é capaz!!!

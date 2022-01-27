@@ -1,0 +1,27 @@
+Uma forma de pegar o valor digitado pelo com usuário e colocar em uma variável:
+
+
+1° Importe a biblioteca do Forms Module no Modulo da aplicação:
+
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+
+
+2° No Html crie a tag form e dentro dessa tag vamos declarar que estamos trabalhando com um formulário e que queremos que o Angular nos ajude a gerenciar. Utilizei o #f como uma variável local para usar como refencia todo o formulário na hora de passar para O (ngSubmit). O ngSubmit fica ouvindo quando o usuário envia o formulário(aperta Enter ou clicka em um botão do tipo submit) e chama a função declarada. Eu usei o [(ngModel)]="nr_Page_Length" simplesmente para exibir o valor dessa variável que já iniciada com o valor 8 dentro do campo de input, para que não fiquei sem nada. Lembre-se sempre de por o name no input se não não funcionará:
+
+<form #f="ngForm" (ngSubmit)="onSubmit(f)">
+	<div class="pb-8">
+		<input [(ngModel)]="nr_Page_Length" name="length" 		class="relative w-10 h-5 pl-2 border-unimed-black rounded-md 		shadow-lg">
+	</div>
+</form>
+
+
+3° A função referenciada pelo ngSubmit ficou dessa forma, no caso eu pego o valor numérico que o usuário digitar e atribuo para a variável nr_Page_Length:
+
+onSubmit(form) {
+        if (parseInt(form.value.length) == 0) {
+            this.objArrayDocumentos = []
+        } else {
+            this.nr_Page_Length = parseInt(form.value.length)
+            this.Buscar_Documentos()
+        }
+    }
