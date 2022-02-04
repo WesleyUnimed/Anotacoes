@@ -1,0 +1,12 @@
+1° Execute o comando: npm install materialize-css --save
+
+2° no arquivo angular.json, adicione as seguintes linhas:
+
+"styles": [
+          "./node_modules/materialize-css/dist/css/materialize.css",
+        ],
+"scripts": [
+          "./node_modules/materialize-css/dist/js/materialize.js"
+        ]
+
+Fim :D
