@@ -13,7 +13,7 @@ git remote add origin <link do repositorio>
 
 ALTERAR O LINK DO REPOSITORIO
 
-git remote remove
+git remote remove origin
 
 git remote add origin <link do repositorio>
 -------------------------------------------------------------------------------------
