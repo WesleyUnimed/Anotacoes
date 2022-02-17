@@ -1,4 +1,4 @@
-1° Execute o comando: npm install materialize-css --save
+1° Execute o comando: npm install materialize-css@next
 
 2° no arquivo angular.json, adicione as seguintes linhas:
 
