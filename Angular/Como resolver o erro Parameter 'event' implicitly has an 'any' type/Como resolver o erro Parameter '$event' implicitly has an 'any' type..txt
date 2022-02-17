@@ -1,0 +1,3 @@
+Como resolver o erro: Parameter '$event' implicitly has an 'any' type.
+
+Cole o comando no arquivo tsconfig.json: "noImplicitAny": false  
