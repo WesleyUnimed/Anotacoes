@@ -1,0 +1,77 @@
+Como usar Observable da forma correta
+
+Contextualizando: Eu tinha uma variável que recebia o valor da largura da página toda vez que a mesma era redimencionada e eu queria que, quando o valor fosse alterado, um outro componente seria alertado e executaria uma lógica.
+
+
+1° Crie um service para colocar os Subjects, esse service só vai servir para essa funcionalidade de Subjects.
+
+
+2° Criei a injeção de dependência no construtor do componete onde eu monitoro o resize da página(componente pai) referente a esse service:
+
+ constructor(private subjectService: SubjectService) { }
+
+
+3° Nesse componente pai estava dessa forma:
+
+
+    nr_Width: number
+
+
+    @HostListener('window:resize')
+    onResize(){
+        this.nr_Width = window.innerWidth
+    }
+
+
+4° No service criei uma vairiável que vai ser o BehaviorSubject dessa funcionalidade:
+
+/**@description Subject para alteração na largura da tela */
+    subject_Width = new BehaviorSubject(0);  
+
+
+
+5° No mesmo componente pai, adicionei a seguinte linha no métedo onResize():
+
+this.subjectService.subject_Width.next(this.nr_Width)
+
+
+ficando da seguinte forma:
+
+nr_Width: number
+
+
+    @HostListener('window:resize')
+    onResize(){
+        this.nr_Width = window.innerWidth
+        this.subjectService.subject_Width.next(this.nr_Width)
+    }
+
+
+6° Agora, no componente filho que vai ser avisado quando o valor for alterado, primeiramente realizei a injeção de dependência do Service assim como foi no componente pai
+
+constructor(private subjectService: SubjectService) { }
+
+
+7° No ngOnInit() do componente filho adicionei o seguinte comando para que eu receba as notificações contendo o novo valor enquanto a variável unsub existir. Com a arrow-function eu pego o novo valor e atribuo a uma variável global:
+
+
+   nr_Largura: number
+   private unsub = new Subject()
+
+   ngOnInit() {
+	this.subjectService.subject_Width.pipe(takeUntil(this.unsub)).subscribe(
+            (nr_Width) => this.nr_Largura = nr_Width
+        )
+   }
+
+
+8° Implemento o ngOnDestroy() para desenscrever do Subject quando for destruido:
+
+   ngOnDestroy() {
+        this.unsub.next()
+        this.unsub.complete();
+   }
+
+
+
+FIM :)

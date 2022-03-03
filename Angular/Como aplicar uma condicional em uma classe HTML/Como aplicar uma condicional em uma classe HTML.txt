@@ -1,0 +1,21 @@
+Como aplicar uma condicional em uma classe HTML
+
+Exemplo:
+
+**Se nr_Largura <= 1200 aplique a classe logo-mobile, Se nr_Largura >= 1200 aplique a classe logo, 
+
+
+<div [ngClass]="{'logo-mobile': nr_Largura <= 1200, 'logo': nr_Largura >= 1200}">
+	<img src="./assets/images/logo.png">
+<div>
+
+
+**para funcionar perfeitamente tive que especificar qual marcação html vai receber essas classes, ficando dessa forma já que eu queria aplicar as classes da tag img:
+
+.logo-mobile img{
+
+}
+
+.logo img{
+
+}
