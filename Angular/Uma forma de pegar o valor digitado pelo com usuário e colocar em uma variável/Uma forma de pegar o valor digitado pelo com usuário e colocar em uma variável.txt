@@ -1,5 +1,19 @@
 Uma forma de pegar o valor digitado pelo com usuário e colocar em uma variável:
 
+-----------------------------------------------------------------------------------
+
+Formas simples de two-away-data-biding: (nome é uma variável)
+
+<input type="text" [value]="nome" (input)="nome = $any($event.target).value">
+
+<input type="text" [ngModel]="nome" (ngModelChange)="nome = $event">
+
+<input type="text" [(ngModel)]="nome">
+
+<input type="text" bindon-ngModel="nome">
+
+-----------------------------------------------------------------------------------
+
 
 1° Importe a biblioteca do Forms Module no Modulo da aplicação:
 
