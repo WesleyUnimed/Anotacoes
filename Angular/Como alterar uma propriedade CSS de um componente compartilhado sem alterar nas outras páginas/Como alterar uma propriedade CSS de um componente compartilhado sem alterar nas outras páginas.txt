@@ -1,0 +1,23 @@
+Como alterar uma propriedade CSS de um componente em um outro componente que faz uso
+
+Contextualizando: eu uso um componente de input em uma página, no mobile, o label fica com um font-size muito grande só que, se eu alterar o font-size, vai alterar nas outras páginas que utilizam esse mesmo componente de input, como eu resolvo isso?
+
+1° No arquivo TS do componente da página (não é o componente compartilhado), adiocione em @Component({}) a seguinte linha: encapsulation: ViewEncapsulation.None, Exemplo:
+
+	@Component({
+    		selector: 'app-exportador',
+    		templateUrl: './exportador.component.html',
+    		styleUrls: ['./exportador.component.scss'],
+    		encapsulation: ViewEncapsulation.None
+	})
+
+2° A classe que eu criei no html da página (não é o componente compartilhado, não alterei nada nele), ficou da seguinte forma:
+
+	.label-mobile{
+    		label{
+        	font-size: 9px !important;
+    		}
+	}
+
+
+como é um label que eu estou alterando eu expecifiquei o label e também adicionei o !important, sem ele não funciona.
