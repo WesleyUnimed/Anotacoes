@@ -55,6 +55,9 @@ Exemplo de como ficou o HTML:
  
  Estava tendo um problema com a paginação, por conta de que o componente que fazia a paginação não existia dentro do if (palavras do Gabriel), então eu resolvi essa questão criando uma variável global (nr_Page) e passei como parâmetro para a função de carregar (funcionou nesse caso)
  
+ Minha tag no html <cdk-virtual-scroll-viewport> estava dando erro de não ser um elemento reconhecido, eu resolvi impontando o ScrollingModule no arquivo module e rodei o comando yarn dev.
+ import { ScrollingModule } from '@angular/cdk/scrolling';
+ 
 
 
 
