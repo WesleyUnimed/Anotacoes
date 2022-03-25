@@ -25,6 +25,10 @@ this.objArrayRamais = [...this.objArrayRamais, ...await this.ramaisService.Get_R
 	*eu to chamando a propria lista dentro dela trazendo assim uma nova instancia
 	*lembrar que toda função de filtro tem que zerar a lista dando um this.objArrayRamais = []
 
+	outro exemplo tirado do portal empresa:
+	 this.objArrayBeneficiarios = [...this.objArrayBeneficiarios, ...objArrayBeneficiarios]
+	* o array objArrayBeneficiarios está recebendo ele mesmo e mais os o restante dos obejtos contidos no objeto objArrayBeneficiarios, essa técnica é conhecida como planificações em TS (um array recebe o conteúdo de outros arrays)
+
 4º alterar o nome da DIV (pai) da listagem no HTML para: cdk-virtual-scroll-viewport, e o ngFor para: *cdkVirtualFor
 
 
