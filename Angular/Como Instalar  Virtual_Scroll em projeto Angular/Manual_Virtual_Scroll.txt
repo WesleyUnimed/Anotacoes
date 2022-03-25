@@ -1,11 +1,11 @@
 
 inserindo virtual scroll aplication angular
 
-1º: Executar o comando: yarn add @angular/cdk
+1Âº: Executar o comando: yarn add @angular/cdk
 
-2º: importar a seguinte linha no component.ts:  @ViewChild('scroller') scroller: CdkVirtualScrollViewport;
+2Âº: importar a seguinte linha no component.ts:  @ViewChild('scroller') scroller: CdkVirtualScrollViewport e adicionar o ngZone no construtor: private ngZone: NgZone;
 
-3º: colar o seguinte comando no ngOnit (alrações no async, await e no nome da função passada, neste caso vai ser o BuscarRamais()
+3Âº: colar o seguinte comando no ngOnit (alraÃ§Ãµes no async, await e no nome da funÃ§Ã£o passada, neste caso vai ser o BuscarRamais()
 
 this.scroller.elementScrolled().pipe(
       map(() => this.scroller.measureScrollOffset('bottom')),
@@ -20,19 +20,19 @@ this.scroller.elementScrolled().pipe(
     })
 
 
-	*referente ao comentário assim: 
+	*referente ao comentÃ¡rio assim: 
 this.objArrayRamais = [...this.objArrayRamais, ...await this.ramaisService.Get_Ramais(objParams)]
 	*eu to chamando a propria lista dentro dela trazendo assim uma nova instancia
-	*lembrar que toda função de filtro tem que zerar a lista dando um this.objArrayRamais = []
+	*lembrar que toda funÃ§Ã£o de filtro tem que zerar a lista dando um this.objArrayRamais = []
 
-4º alterar o nome da DIV (pai) da listagem no HTML para: cdk-virtual-scroll-viewport, e o ngFor para: *cdkVirtualFor
+4Âº alterar o nome da DIV (pai) da listagem no HTML para: cdk-virtual-scroll-viewport, e o ngFor para: *cdkVirtualFor
 
 
-5º colocar o valor da altura dos itens da listagem na mesma DIV (pai), no caso a altura de cada card era 56px, então ficou:
+5Âº colocar o valor da altura dos itens da listagem na mesma DIV (pai), no caso a altura de cada card era 56px, entÃ£o ficou:
 [itemSize]="56"
 
 
-6º caso a listagem bugue, utilize  minBufferPx="600" maxBufferPx="600" também no HTML, isso manipula o cache. Os valores
+6Âº caso a listagem bugue, utilize  minBufferPx="600" maxBufferPx="600" tambÃ©m no HTML, isso manipula o cache. Os valores
  de 600 podem ser alterados.
 
 
