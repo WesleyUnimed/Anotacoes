@@ -5,7 +5,7 @@ inserindo virtual scroll aplication angular
 
 2º: importar a seguinte linha no component.ts:  @ViewChild('scroller') scroller: CdkVirtualScrollViewport e adicionar o ngZone no construtor: private ngZone: NgZone;
 
-3º: colar o seguinte comando no ngOnit (alrações no async, await e no nome da função passada, neste caso vai ser o BuscarRamais()
+3º: Colar o seguinte comando no ngOnit (alrações no async, await e no nome da função passada, neste caso vai ser o BuscarRamais(), lembrando que se for a o infinite scroll quando for mobile e paginação quando for desktop, o código abaixo tem que estar dentro de um if.
 
 this.scroller.elementScrolled().pipe(
       map(() => this.scroller.measureScrollOffset('bottom')),
@@ -43,6 +43,18 @@ this.objArrayRamais = [...this.objArrayRamais, ...await this.ramaisService.Get_R
 Exemplo de como ficou o HTML: 
 
  <cdk-virtual-scroll-viewport [itemSize]="56" minBufferPx="600" maxBufferPx="600" class="mx-5 h-full px-5 md:px-20 lg:px-20 pt-4 lg:pt-8">
+ 
+ 
+ ***************Sacadas***************
+ 
+ Estava tendo erros no console e alguns deles foram resolvidos colocando o código do 3° passo dentro da função ngAfterViewInit();
+
+ Uma lógica de um outro componente estava também acusando erro no console que foi corrigido pondo os mesmos dentro da função SetTimeOut();
+ 
+ A rolagem dos cards estava bugada, eu rolava a tela e a barra de rolagem subia para a topo tendo que rolar até em baixo da tela para ser jogado para o topo novamente,isso foi resolvido mexendo no [itemSize] no HTML;
+ 
+ Estava tendo um problema com a paginação, por conta de que o componente que fazia a paginação não existia dentro do if (palavras do Gabriel), então eu resolvi essa questão criando uma variável global (nr_Page) e passei como parâmetro para a função de carregar (funcionou nesse caso)
+ 
 
 
 
