@@ -3,7 +3,7 @@ inserindo virtual scroll aplication angular
 
 1º: Executar o comando: yarn add @angular/cdk, caso não funcione por algum motivo, tente: npm i @angular/cdk --save
 
-2º: importar a seguinte linha no component.ts:  @ViewChild('scroller') scroller: CdkVirtualScrollViewport e adicionar o ngZone no construtor: private ngZone: NgZone;
+2º: importar a seguinte linha no component.ts:  @ViewChild( CdkVirtualScrollViewport ) scroller: CdkVirtualScrollViewport; e adicionar o ngZone no construtor: private ngZone: NgZone;
 
 3º: Colar o seguinte comando no ngOnit (alrações no async, await e no nome da função passada, neste caso vai ser o BuscarRamais(), lembrando que se for a o infinite scroll quando for mobile e paginação quando for desktop, o código abaixo tem que estar dentro de um if.
 
