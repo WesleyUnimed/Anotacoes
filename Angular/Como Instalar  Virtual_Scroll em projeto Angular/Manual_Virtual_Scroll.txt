@@ -1,7 +1,7 @@
 
 inserindo virtual scroll aplication angular
 
-1º: Executar o comando: yarn add @angular/cdk
+1º: Executar o comando: yarn add @angular/cdk, caso não funcione por algum motivo, tente: npm i @angular/cdk --save
 
 2º: importar a seguinte linha no component.ts:  @ViewChild('scroller') scroller: CdkVirtualScrollViewport e adicionar o ngZone no construtor: private ngZone: NgZone;
 
