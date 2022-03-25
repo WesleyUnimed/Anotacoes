@@ -33,7 +33,7 @@ this.objArrayRamais = [...this.objArrayRamais, ...await this.ramaisService.Get_R
 
 
 6º caso a listagem bugue, utilize  minBufferPx="600" maxBufferPx="600" também no HTML, isso manipula o cache. Os valores
- de 600 podem ser alterados.
+ de 600 podem ser alterados. Lembrar de sempre criar uma classe no html na tag do cdk definindo uma altura fixa.
 
 
 Exemplo de como ficou o HTML: 
