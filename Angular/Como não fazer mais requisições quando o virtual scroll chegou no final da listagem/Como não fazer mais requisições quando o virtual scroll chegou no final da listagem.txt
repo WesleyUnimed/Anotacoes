@@ -1,0 +1,21 @@
+Como não fazer mais requisições quando o virtual scroll chegou no final da listagem:
+
+1° Crie um variável global boolean que vai servir para verificar se ainda há itens no array.Exemplo:
+
+b_Fim_Lista: boolean = false
+
+
+2° Dentro da função que busca os dados no servidor, crie um if, dessa forma:
+
+if(objArrayBeneficiarios.length == 0){
+	this.b_Fim_Lista = true
+}
+
+3° Agora, dentro do: this.ngZone.run(async () => { } ..... que fica dentro da função que é colada no OnInit ou no AfterViewInit para fazer o virtual scroll funcionar, ficando desse jeito:
+
+this.ngZone.run(async () => {
+
+   if(!this.b_Fim_Lista){
+      this.Carregar(++this.nr_Page)
+   }
+});

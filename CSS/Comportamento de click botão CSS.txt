@@ -1,0 +1,7 @@
+Comportamento de click botão CSS:
+
+
+&:active {
+            transform: scale(0.92);
+            transition-duration: 280ms;
+      }
