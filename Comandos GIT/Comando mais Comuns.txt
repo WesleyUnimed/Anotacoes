@@ -22,7 +22,7 @@ COMANDOS IMPORTANTES
 
 git remote
 
-git remote -v
+git remote -v  (ver o nome do repositório)
 
 git status
 -------------------------------------------------------------------------------------
