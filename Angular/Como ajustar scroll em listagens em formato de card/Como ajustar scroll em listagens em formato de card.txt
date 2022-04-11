@@ -1,0 +1,13 @@
+Como ajustar scroll em listagens em formato de card
+
+no HTML
+
+<button (click)="scroll(target)">Click to scroll</button>
+<div #target>Your target</div>
+
+
+No componente
+
+scroll(el: HTMLElement) {
+    el.scrollIntoView({behavior: 'smooth'});
+}
