@@ -1,0 +1,17 @@
+nest new my-pricing  (novo projeto em nest)
+
+npm run:start dev  (starta a compilação)
+
+nest g c nome-do-controller  (novo controller)
+
+nest g s nome-do-service  (novo serviço)
+
+nest g resource nome  (já cria o esqueleto da api)
+ 
+
+npm install sequelize sequelize-typescript sqlite3 @nestjs/sequelize
+
+npm install @types/sequelize --save-dev
+
+
+ExpressionChangedAfterItHasBeenCheckedError
