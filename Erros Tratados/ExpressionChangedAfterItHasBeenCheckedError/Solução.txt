@@ -1,0 +1,3 @@
+Esse erro estava ocorrendo por causa de que a requisição de agendamento estava dentro do OnInit. O que aconteceu foi que a página carregou antes de a requisição ser concluída, gerando o erro.
+
+Solução: o que resolveu foi colocar um SetTimeOut em volta na função de requisição
