@@ -1,0 +1,18 @@
+COMANDOS DOCKER
+
+testar o docker: docker version
+
+
+rodar um container: docker run -it node  (nome da imagem)
+
+
+pegar a última versão da imagem: docker run -it node:latest (nome da imagem)
+
+
+listar todos os containers que eu tenho ativo: docker ps
+
+
+listar todos os containers: docker ps -a
+
+
+como rodar um containeir em background: docker run -d nginx (nome da imagem)
