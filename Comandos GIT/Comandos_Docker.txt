@@ -27,7 +27,7 @@ como expor uma porta do container: docker run -d -p 80:80 ngnix (o primeiro 80 Ã
 como reiniciar um container depois de parado: docker start + id  (para ver o id: docker ps)
 
 
-como definir um nome de id do container: --name nginx-docker, exemplo: docker run -d -p 80:80 --name nginx-docker ngnix
+como definir um nome de id do container: --name nginx-docker, exemplo: docker run -d -p 80:80 --name nginx-docker nginx
 
 
 como acessar o log do container: docker logs + nome ou id do container 
