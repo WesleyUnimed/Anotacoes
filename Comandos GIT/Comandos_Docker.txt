@@ -54,5 +54,5 @@ como excluir tudo que não esteja sendo utilizado: docker system prune
 como listar as redes existentes: docker network ls
 
 
-como criar volume: docker volume create --name alunosdata
+como criar volume: docker volume create --name alunosdata // como listar volumes: docker volume ls
 
