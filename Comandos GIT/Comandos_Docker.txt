@@ -49,3 +49,6 @@ buildar uma imagem: docker build .
 
 
 como excluir tudo que não esteja sendo utilizado: docker system prune
+
+
+como listar as redes existentes: docker network ls
