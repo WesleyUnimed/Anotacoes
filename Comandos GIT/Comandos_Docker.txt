@@ -45,7 +45,7 @@ como excluir um container: docker rm + nome ou id do container
 como excluir uma imagem: docker rmi + nome ou id do container
 
 
-buildar uma imagem: docker build .
+buildar uma imagem: docker build -t (nome da imagem) .
 
 
 como excluir tudo que não esteja sendo utilizado: docker system prune
