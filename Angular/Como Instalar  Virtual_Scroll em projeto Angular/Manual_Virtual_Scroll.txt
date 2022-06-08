@@ -47,6 +47,8 @@ Exemplo de como ficou o HTML:
  
  ***************Sacadas***************
  
+ Ficar atendo a sempre incrementar a página e depois chamar a função, caso contrário a listagem se duplica
+ 
  Estava tendo erros no console e alguns deles foram resolvidos colocando o código do 3° passo dentro da função ngAfterViewInit();
 
  Uma lógica de um outro componente estava também acusando erro no console que foi corrigido pondo os mesmos dentro da função SetTimeOut();
@@ -59,6 +61,8 @@ Exemplo de como ficou o HTML:
  import { ScrollingModule } from '@angular/cdk/scrolling';
  
  Caso de o um erro de que o array não é incrementável, o iniciei com um array vazio
+ 
+ 
  
 
 
