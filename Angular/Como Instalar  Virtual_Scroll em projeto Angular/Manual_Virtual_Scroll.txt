@@ -49,6 +49,8 @@ Exemplo de como ficou o HTML:
  
  Ficar atendo a sempre incrementar a página e depois chamar a função, caso contrário a listagem se duplica
  
+ Ficar atendo com a variável que monitora o fim da listagem quando der o refresh, sempre resetar ela também, caso contrário a listagem não funciona
+ 
  Estava tendo erros no console e alguns deles foram resolvidos colocando o código do 3° passo dentro da função ngAfterViewInit();
 
  Uma lógica de um outro componente estava também acusando erro no console que foi corrigido pondo os mesmos dentro da função SetTimeOut();
