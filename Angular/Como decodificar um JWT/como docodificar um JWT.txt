@@ -1,0 +1,19 @@
+Como decodificar um JWT
+
+1° execute o comando: npm install @auth0/angular-jwt
+
+2° faça a importação: import { JwtHelperService } from '@auth0/angular-jwt';
+
+3° crie uma instância e use:
+
+const helper = new JwtHelperService();
+
+const decodedToken = helper.decodeToken(myToken);
+
+
+4° outros usos:
+
+const expirationDate = helper.getTokenExpirationDate(myRawToken);
+
+const isExpired = helper.isTokenExpired(myRawToken);
+

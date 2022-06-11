@@ -1,0 +1,12 @@
+Como abrir um link em uma nova aba e como abrir na mesma janela 
+
+
+Abrir em uma nova aba:
+
+window.open(link, "_blank")
+
+
+
+Abir na mesma janela:
+
+window.location.href = link

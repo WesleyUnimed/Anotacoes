@@ -1,0 +1,4 @@
+"noImplicitAny": false,
+"noImplicitReturns": false,
+"strictPropertyInitialization": false
+"noPropertyAccessFromIndexSignature": false,

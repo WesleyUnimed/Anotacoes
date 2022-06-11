@@ -1,0 +1,18 @@
+Como criar snack bar no angular
+
+1° Use o componente de snackbar do gestão do conhecimento como base e faça as devidas importações e importações.
+
+2° No arquivo subject service crie um BehaviorSubject que passa os parâmentros
+
+3° No app.component.ts instancie o componente de snackbar
+
+4° No app.component.html cole a tag do componente de snackbar
+
+5° Onde quiser usar o snackbar basta chama-lo e passar a mensagem dessa forma:
+
+   this.subjectService.subject_Exibindo_Snackbar.next({message: (res.data.login.mensagem)})
+
+
+ou passando uma string:
+
+this.subjectService.subject_Exibindo_Snackbar.next({message: "teste"})

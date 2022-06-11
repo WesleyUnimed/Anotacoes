@@ -1,0 +1,15 @@
+Exemplo de como Filtrar por datas no Hasura
+
+Nesse exemplo, as datas são gravadas com um horário global e para que seja trago no nosso horário local é necessesário adicionar o -03:00 no final.
+
+
+Esse query está buscando os usuarios que acessaram um site no hoário igual ou maior que 09:11:08 no dia 03/06/2022:
+
+query MyQuery {
+  conteudoacesso(where: {_and: {dt_aceso: {_gte: "2022-06-03T09:11:08.080918-03:00"}}}) {
+    nm_usuario
+    dt_aceso
+  }
+}
+
+
