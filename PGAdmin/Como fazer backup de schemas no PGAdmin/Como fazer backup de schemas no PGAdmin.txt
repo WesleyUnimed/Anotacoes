@@ -1,0 +1,8 @@
+Como fazer backup de schemas no PGAdmin
+
+1° acesse o Schema que deseja fazer o backup, no meu caso o nome do schema é public, clique com o direito e selecione a opção "Backup..."
+
+2° na janela que irá abrir, adicione um diretório onde vai ficar o backup, o ideal é colocar o nome da pasta de diretório da seguinte forma: bkp-prod-13-06-22 (backup, se é produção ou homologação, a data).
+a única coisa que eu preencho é o nome do diretório, o restante eu deixo como está.
+
+3° agora, no Schema onde vc quer atualizar com esse backup vá com o batão direito e selecioe a opção Refresh..., selecione o diretório de backup e confirme. Caso dê algum erro dê um refresh na tabela e veja se as alterações foram aplicadas.

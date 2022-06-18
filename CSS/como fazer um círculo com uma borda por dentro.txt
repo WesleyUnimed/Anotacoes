@@ -1,0 +1,11 @@
+Como fazer bordar em um círculo:
+
+
+.circle {
+    background-color: greenyellow;
+    border: 3px solid #FFF;
+    border-radius: 100%;
+    box-shadow: 0 0 0 2px greenyellow;
+    height: 90px;
+    width: 90px;
+}

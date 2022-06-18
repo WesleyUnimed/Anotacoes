@@ -1,0 +1,18 @@
+mutation ($_set: usuarios_set_input, $cd_usuario: Int) {
+  update_usuarios(where: {cd_usuario: {_eq: $cd_usuario}}, _set: $_set) {
+    returning {
+      perfil {
+        role
+        nm_perfil
+        cd_perfil
+      }
+      cd_usuario
+      cd_perfil
+      dt_bloqueio
+      cd_login
+      b_login_ad
+    }
+  }
+}
+
+{"_set": {"b_login_ad": false, "cd_login": "wesss", "cd_perfil": 1, "dt_bloqueio": "06-15-2022" }, "cd_usuario": 277} 
