@@ -4,4 +4,5 @@ Cole os seguinter comandos no arquivo tsconfig.json:
 
 "noImplicitAny": false,
 "noImplicitReturns": false,
-"strictPropertyInitialization": false
+"strictPropertyInitialization": false,
+"noImplicitThis": false,
