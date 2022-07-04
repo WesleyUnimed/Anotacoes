@@ -6,7 +6,7 @@ site para baixar as animações Json: https://lottiefiles.com/featured
 1° instale: yarn add lottie-web ngx-lottie  ou  npm i lottie-web ngx-lottie
 
 
-2° No módulo com componente cole o seguinte comando:
+2° No módulo do componente cole o seguinte comando:
 
 import { LottieModule } from 'ngx-lottie';
 import player from 'lottie-web';
@@ -15,7 +15,7 @@ export function playerFactory() {
 }
 
 
-3° Ainda no módulo, em imports, colo o seguinte comando:
+3° Ainda no módulo, em imports, cole o seguinte comando:
 
 LottieModule.forRoot({ player: playerFactory })
 
@@ -25,7 +25,7 @@ LottieModule.forRoot({ player: playerFactory })
 <ng-lottie [options]="options" (animationCreated)="animationCreated($event)"></ng-lottie>
 
 
-5° No arquivo .ts do componente que vai ficar a animação, cole o seguinte comando (no path coloque o caminha da animação desejada:
+5° No arquivo .ts do componente que vai ficar a animação, cole o seguinte comando (no path coloque o caminho da animação desejada:
 
 options: AnimationOptions = {
     path: '/assets/animations/nothing-fund-lupa.json',
