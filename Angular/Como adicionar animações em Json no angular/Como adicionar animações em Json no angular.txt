@@ -35,3 +35,16 @@ options: AnimationOptions = {
 
 
 Fim :)
+
+
+####################################################################
+
+SACADA:
+
+Após eu fazer o passo a passo começou a dar um erro exótico no console que foi solucionado colando as dependencias do ngx-lottie e lottie-web por último
+no package.json.
+
+####################################################################
+
+
+
