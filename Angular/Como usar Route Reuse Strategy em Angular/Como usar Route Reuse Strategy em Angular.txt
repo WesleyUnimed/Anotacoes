@@ -1,0 +1,69 @@
+Como usar Route Reuse Strategy em Angular
+
+
+1° crie um arquivo service, dentro dele colo o seguinte código:
+
+------------------------------------------------------------------------------------------------------
+
+import { RouteReuseStrategy, ActivatedRouteSnapshot, DetachedRouteHandle } from "@angular/router";
+
+export class RouteReuseService implements RouteReuseStrategy {
+
+    private storedRoutes = new Map<string, DetachedRouteHandle>();
+
+    shouldDetach(route: ActivatedRouteSnapshot): boolean {
+        return route.routeConfig.path === 'programa';
+    }
+    
+    store(route: ActivatedRouteSnapshot, handle: DetachedRouteHandle): void {
+        this.storedRoutes.set(route.routeConfig.path, handle);
+    }
+
+    shouldAttach(route: ActivatedRouteSnapshot): boolean {
+        return !!route.routeConfig && !!this.storedRoutes.get(route.routeConfig.path);
+    }
+
+    retrieve(route: ActivatedRouteSnapshot): DetachedRouteHandle | null {
+        return this.storedRoutes.get(route.routeConfig.path);
+    }
+
+    shouldReuseRoute(future: ActivatedRouteSnapshot, curr: ActivatedRouteSnapshot): boolean {
+        return future.routeConfig === curr.routeConfig;
+    }
+}
+
+------------------------------------------------------------------------------------------------------
+
+obs.: O que vai mudar de projeto pra projeto é o route.routeConfig.path === 'programa'; que em um outro projeto, ao invés de 'programa' vai ser o nome da rota que você vai querer reutilizar
+
+
+2° Dentro de providers em app.module.ts, cole:
+
+	{
+            provide: RouteReuseStrategy,
+            useClass: RouteReuseService
+        }
+
+
+Fim :)
+
+------------------------------------------------------------------------------------------------------
+
+Anotações:
+
+ao implementar a interface RouteReuseStrategy, é obrigatório atribuir as seguintes funções:
+
+shouldDetach: Determina se esta rota (e sua subárvore) deve ser desanexada para ser reutilizada posteriormente.
+
+store: Armazena a rota separada.
+
+shouldAttach: Determina se esta rota (e sua subárvore) deve ser reanexada.
+
+retrieve: Recupera a rota armazenada anteriormente.
+
+shouldReuseRoute: determina se uma rota deve ser reutilizada.
+
+
+shouldDetache storesão chamados quando você sai de uma rota. Se shouldDetachretorna true, precisamos storeda rota, pois queremos reutilizar mais tarde. shouldAttache retrievesão chamados ao entrar em uma rota. Se shouldAttachreturn true, queremos reutilizar uma rota armazenada anteriormente em vez de construir novos componentes.
+
+link:https://javascript.plainenglish.io/angular-route-reuse-strategy-b5d40adce841#:%7E:text=When%20navigating%20away%20from%20a,user%2F57%20for%20example

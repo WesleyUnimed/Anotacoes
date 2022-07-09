@@ -1,0 +1,12 @@
+Como usar SetInterval()
+
+
+this.nr_Width_Bar = 0
+        var id = setInterval(() => {
+            if (this.nr_Width_Bar >= 90) {
+                clearInterval(id);
+            } else {
+                this.nr_Width_Bar++
+            }
+
+        }, 10);
