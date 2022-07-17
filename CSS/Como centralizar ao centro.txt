@@ -1,2 +1,21 @@
-transform -translate-x-1/2 left-1/2
+Quando quiser centralizar ao centro em relação a tela:
 
+body{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+
+
+Quando quiser centralizar uma div dentro de outra div:
+
+.img-aling{
+    margin: 0;
+    position: relative;
+    top: 50%;
+    left: 50%;
+    margin-right: -50%;
+    transform: translate(-50%, -50%);
+}
