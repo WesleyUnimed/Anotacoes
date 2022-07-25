@@ -1,0 +1,3 @@
+Exemplo de style em angular:
+
+[style.backgroundColor]="b_Color == 'vermelho'? '#E53040':'#245F40'" 

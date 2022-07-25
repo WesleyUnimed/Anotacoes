@@ -1,0 +1,18 @@
+Como remover objetos repetidos em um array:
+
+(exemplo em gestão do conhecimento - meus estudos)
+
+
+Essa const recebe os conteúdos (objetos) por vezes repetidos:
+
+
+const responsemystudies = await this.meuestudosService.Get_My_Studies()
+
+
+
+O Distinc foi feito com:
+
+let array_Contents_Distinct = [... new Set(responsemystudies.data.acessos.map(e => e.conteudo.cd_conteudo))]
+
+
+O resultado foi que ele me trouxe os Id dos conteúdos sem repetir os valores, com isso eu fiz um forEach no array_Contents_Distinct e busquei passando cada valor como uma variável na query
