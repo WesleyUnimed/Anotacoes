@@ -1,0 +1,55 @@
+Como exportar dados para Excel:
+
+1° Execute: npm i xlsx --save  ("espere um pouco pq pode demorar")
+
+2° Use a função:
+
+async Export_Excel() {
+    this.subjectService.subject_Exibindo_Loading.next(true)
+    const obj_Array_All_Access = await this.meuestudosService.Get_All_Access()
+    this.obj_Array_All_Access = obj_Array_All_Access.data.acessos
+
+    setTimeout(() => {
+      this.subjectService.subject_Exibindo_Loading.next(false)
+      /* pass here the table id */
+      let element = document.getElementById('excel-table');
+      const ws: XLSX.WorkSheet = XLSX.utils.table_to_sheet(element);
+  
+      /* generate workbook and add the worksheet */
+      const wb: XLSX.WorkBook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
+  
+      /* save to file */
+      XLSX.writeFile(wb, this.fileName);
+    }, 5000);
+  } 
+
+
+3° Faça a importação: import * as XLSX from 'xlsx';
+
+4° Exemplo do table no HTML
+
+<div style=" margin: auto; width: 50%;">
+       
+        <table hidden="hidden" id="excel-table">
+           
+          <tr>
+              <th>Id</th>
+              <th>Categoria</th>
+              <th>Título</th>
+              <th>Usuário</th>
+              <th>Data e hora de acesso</th>
+              <th>Total de acessos: {{obj_Report.nr_registos}}</th>
+          </tr>
+          <tr *ngFor="let item of obj_Array_All_Access">
+            <td>{{item.cd_conteudo_acesso}}</td>
+            <td>{{item.conteudo.categoria.nm_categoria}}</td>
+            <td>{{item.conteudo.nm_titulo}}</td>
+            <td>{{item.dt_acesso | formatDate: 'full'}}</td>
+            <td>{{item.usuario.cd_login}}</td>
+          </tr>,
+        </table>
+    </div>
+
+
+link de referência: https://jsonworld.com/demo/how-to-export-data-to-excel-file-in-angular-application
