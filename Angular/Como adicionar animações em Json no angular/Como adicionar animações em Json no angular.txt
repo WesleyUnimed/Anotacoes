@@ -28,7 +28,7 @@ LottieModule.forRoot({ player: playerFactory })
 5° No arquivo .ts do componente que vai ficar a animação, cole o seguinte comando (no path coloque o caminho da animação desejada:
 
 options: AnimationOptions = {
-    path: '/assets/animations/nothing-fund-lupa.json',
+    path: 'assets/animations/nothing-fund-lupa.json',
   };
 
   animationCreated(animationItem: AnimationItem): void {}
@@ -44,6 +44,8 @@ SACADA:
 Após eu fazer o passo a passo começou a dar um erro exótico no console que foi solucionado colando as dependencias do ngx-lottie e lottie-web por último
 no package.json.
 
+
+Caso após buildar a aplicação e a animação não funcionar, verifique se no caminho da animação está com uma "/" na frente do assets, se tiver retire e suba a aplicação de novo
 ####################################################################
 
 
