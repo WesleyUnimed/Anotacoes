@@ -30,7 +30,10 @@ como reiniciar um container depois de parado: docker start + id  (para ver o id:
 como definir um nome de id do container: --name nginx-docker, exemplo: docker run -d -p 80:80 --name nginx-docker nginx
 
 
-como acessar o log do container: docker logs + nome ou id do container 
+como acessar o log do container: docker logs + nome ou id do container
+
+
+como rodar comandos dentro de um container: docker exec -nome do container- -comando, ex.: ls -
 
 
 visualizar todas as imagens: docker image ls
