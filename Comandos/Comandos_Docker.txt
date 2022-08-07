@@ -33,10 +33,10 @@ como definir um nome de id do container: --name nginx-docker, exemplo: docker ru
 como acessar o log do container: docker logs + nome ou id do container
 
 
-como rodar comandos dentro de um container: docker exec -nome do container- -comando, ex.: ls -
+como executar comandos em um container que ja estaja rodando: docker exec -it -nome do container- bash (pra sair do terminal do container: ctrl + d)
 
 
-visualizar todas as imagens: docker image ls
+listar todas as imagens: docker images
 
 
 como renomear a tag de uma imagem: usar a flag -t + nome que quiser,  exemplo: docker build -t docker-image
@@ -58,4 +58,8 @@ como listar as redes existentes: docker network ls
 
 
 como criar volume: docker volume create --name alunosdata // como listar volumes: docker volume ls
+
+
+como renomear um container: docker rename -nome atual do container- -novo nome do container-
+
 
