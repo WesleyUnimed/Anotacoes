@@ -1,0 +1,45 @@
+Como foi meu primeiro build de produção:
+
+
+Hasura
+------------------------------------------------------------------------------------------------------
+
+Atualizei o Hasura de produção, acessei o IP de produção no Putty e alterei a versão do hasura manualmente dentro do docker-compose, parei e subi o container.
+
+Atualizei o metadata do Hasura de produção, foi feito de forma simples: fui na Hasura de homologoção em configurações e exportar metadata e logo em seguida fui em produção => coonfigurações => importar metadata
+
+Tive um problema com o HASURA_GRAPHQL_ENABLE_REMOTE_SCHEMA_PERMISSIONS: "true", já que eu tenho um schema remoto para altenticação. O problema que estava ocorrendo era que não estava conseguindo logar. O que aparentemente resolveu foi comentar essa linha dentro do arquivo docker-compose, parar e subir o container.
+
+------------------------------------------------------------------------------------------------------
+
+
+PgAdmin
+------------------------------------------------------------------------------------------------------
+Fiz o backup do dos schemas da base de homologação e dei um restore desse backup na base de produção, importando assim as tabelas que havia criado em homologação.
+
+------------------------------------------------------------------------------------------------------
+
+
+Front do Angular
+------------------------------------------------------------------------------------------------------
+Como eu alterei o caminho dos fonts em produção(estavam na pasta PRD e eu alterei para a pasta Portal) tive que alterar o caminho do arquivo no web.config e tamb no comando de publish dentro do packge json da aplicação front.
+
+Publiquei os fonts do front em produção, sem segredo, rodei o comando publish:prd e joguei os arquivos do dist no lugar dos arquivos que estavam em produção, se atentando ao web.config
+
+------------------------------------------------------------------------------------------------------
+
+
+Back do Angular
+------------------------------------------------------------------------------------------------------
+Subi o nestjs com o comando publish, esse comando publish roda um arquivo.bat que manda gerar a imagem do Docker e subir no DockerHub e via PuTTy, acessei o container e rodei o comando ./atualizar.sh para assim buscar a nova imagem que subi
+
+------------------------------------------------------------------------------------------------------
+
+
+VisualStudio 2019
+------------------------------------------------------------------------------------------------------
+Eu já tinha a pasta do gestão de conhecimento mapeada, coloquei os fonts do front e do back dentro dessa pastinha mapeada com os nomes corretos, para adicionar no TFC é só clickar na pasta mapeada com o botão direito e ir em Adicionar itens a pasta, lembrando de primeiramento fazer esse procedimento com o arquivo .tfsignore e logo após feito, fazer com os fonts de back e front
+
+
+------------------------------------------------------------------------------------------------------
+
