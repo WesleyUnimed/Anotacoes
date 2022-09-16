@@ -1,0 +1,20 @@
+Como criar uma janela Popup
+
+
+1° Crie uma variável com as configurações do poPup:
+
+ds_Param: string = "height=700,width=800,left=500,top=400,resizable=yes,scrollbars=yes,toolbar=yes,menubar=no,location=no,directories=no, status=yes"
+
+
+2° 
+
+	environment.CONS_URL_FRONTBASE: é preciso passar a URL de uma página que será aberta no popup, eu pego o caminho da variável de ambiente e acrecento o endpoint do meu componente que será aberto, no caso é "anexo".
+
+	'_blank': É o target.
+
+	${this.ds_Param}: são as configurações.
+
+
+Na função que vai abrir o popup:
+
+const popUp = window.open(`${environment.CONS_URL_FRONTBASE}anexos?cd_Movimentacao=${this.cd_Movimentacao}` , '_blank' , `${this.ds_Param}`)
