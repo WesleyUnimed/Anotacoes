@@ -1,0 +1,37 @@
+no Github de componentes tem um exemplo.
+
+
+1° instale as dependencias do recaptcha: yarn add ng-recaptcha
+
+obs.: só funcionou com o angular 14 ou superior
+
+2° declare a dependência no appModule:
+
+RecaptchaModule => import { RecaptchaModule } from 'ng-recaptcha';
+
+3° vá no site e gere o token, esse token vai no HTML: https://www.google.com/recaptcha/admin/create 
+
+4° exemplo no html:
+
+<div [hidden]="captcha">
+    <p>Hello</p>
+    <re-captcha (resolved)="resolved($event)" siteKey="6Ld6KRYiAAAAAA24YDKQ9A4mQrmOvX7TutCPFmuP"></re-captcha>
+</div>
+<div [hidden]="!captcha">
+    <p> {{ email }}</p>
+</div>
+
+5° exemplo no arquivo TS:
+
+  captcha: string
+  email: string
+
+  constructor() { 
+    this.captcha = '';
+    this.email = 'Secret@email.com'
+  }
+
+  resolved(captchaResponse: string){
+    this.captcha = captchaResponse
+    console.log("resolvido captcha" + this.captcha)
+  }
