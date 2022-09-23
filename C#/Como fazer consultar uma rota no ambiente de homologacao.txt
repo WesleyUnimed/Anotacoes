@@ -1,0 +1,24 @@
+Caso alguma rota apresente algum erro em homologação mas não apresente o mesmo erro em localhost faço o seguinte:
+
+
+1° Acesse o Insomnia
+
+2° Descubra qual o tipo de autorização que a API utiliza e preencha o header (geralmente fica no nest) 
+
+3° Verifique qual o tipo de verbo HTTP (geralmente fica no nest)
+
+4° Como montar a URL de consulta no Insomnia:
+
+  - O começo pra base de homologação vai ser: homologacao.unimedsulcapixaba.coop.br
+
+  - A continuação vai depender do portal que vc está acessando. Exemplo:
+
+      \\10.1.2.14\c$\inetpub\wwwroot\api\beneficiario   **wwwroot é a raiz do servidor e api\beneficiario é a API
+							que eu estou acessando**  
+
+  - O restante vai ser o mesmo caminho que está na controller do C#
+
+	
+  Exemplo de url: homologacao.unimedsulcapixaba.coop.br/api/beneficiario/api/v1/Financeiro/01767560003695009/2022/07/Composicao/Faturamento/PDF 
+		  |___________________________________||________________||____________________________________________________________________|
+                           LINK HOM			       API				     CONTROLLER
