@@ -1,0 +1,5 @@
+Um caso que ocorreu quando eu adicionei um campo no Report (é o cara que é utilizado na geração de PDF).
+
+Subi a API em homologação normalmente substituindo somente os aquivos API.dll, só que o Report fica fora desses arquivios então não subiu as alterações, não gerando assim o PDF em homologação mas continuando gerando em localhost.
+
+Solução: Adiciona manualmente o arquivo .rdlc na pasta Report no servidor 
