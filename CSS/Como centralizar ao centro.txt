@@ -8,6 +8,13 @@ body{
 }
 
 
+Centralizar verticalmente, use na div pai do elemento que deseja ser centralizado:
+
+display: flex;
+align-items: center;
+justify-content: center;
+
+
 
 Quando quiser centralizar uma div dentro de outra div:
 
