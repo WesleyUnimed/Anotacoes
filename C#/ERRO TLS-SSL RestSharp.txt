@@ -1,0 +1,7 @@
+Erro relacionado ao TLS/SSL utilizando RestSharp no C#
+
+Messagem de erro: Não foi possível criar um canal seguro para SSL/TLS [fechada]
+
+Posível causa: Protocolo de segurança do TLS desatualizado
+
+Solução: adicionar a seguinte linha no código: System.Net.ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
