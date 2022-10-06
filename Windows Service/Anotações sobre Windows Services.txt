@@ -1,0 +1,14 @@
+ANOTAÇÕES SOBRE WINDOWS SERVICES.
+
+1° Crie uma pasta no C:/Unimed que é onde vai ser instalado o serviço, uma vez instalado não precisa desinstalar, basta recompilar a solução com as alterações, copiar esses arquivos e substituir no local onde foi instalado.
+
+2° Entre nessa pasta criada via CMD e rode o comando: cd C:\Windows\Microsoft.NET\Framework\v4.0.30319 , esse é o local do instalado installutil, uma vez no diretório do instalador instale seu serviço com o comando: installutil + diretório. (Esse diretório é obtido abrindo o local da solution no Visual Studio).
+
+3° Uma vez instalado com sucesso você pode acessar os Serviços do Windows e iniciar o serviço.
+
+
+Outras anotações:
+
+  - Para habilitar o debug de uma aplicação em execução adicione o seguinte comando no OnStart: System.Diagnostics.Debugger.Launch();
+  - Para desinstalar um serviço vc utiliza o mesmo comando de instalação, adicionando a flag -u
+
