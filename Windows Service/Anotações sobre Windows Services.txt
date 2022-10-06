@@ -12,3 +12,8 @@ Outras anotações:
   - Para habilitar o debug de uma aplicação em execução adicione o seguinte comando no OnStart: System.Diagnostics.Debugger.Launch();
   - Para desinstalar um serviço vc utiliza o mesmo comando de instalação, adicionando a flag -u
 
+  - Para debugar um serviço que NÃO ESTÁ RODANDO:
+	
+	1° Na função Main() na Program.cs comente tudo e instancie seu service ex.: Service1 service1 = new Service1();
+
+	2° Dentro do seu Service.cs => public Service() => chame a função que deseja debugar.
