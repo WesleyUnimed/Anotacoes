@@ -1,0 +1,10 @@
+EX.:
+
+public Pessoa(){
+ this.nome = 'Fulano';
+ this.nr_Idade = 26;
+}
+
+Quando for criada uma instância de Pessoa, as propriedades nome e nr_Idade já virão preenchidas.
+
+Um construtor especializado serve para modificar o comportamento da classe antes de ser instaciada, para quando for, já vier conforme feito anteriormente.

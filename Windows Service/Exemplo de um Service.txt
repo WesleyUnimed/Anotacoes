@@ -1,0 +1,1016 @@
+namespace MVServices
+{
+    partial class MV_004_QU : ServiceBase
+    {
+
+        private System.Timers.Timer objTimerExecutarDiario = null;
+
+        public MV_004_QU()
+        {
+            InitializeComponent();
+        }
+
+        protected override void OnStart(string[] args)
+        {
+            System.Diagnostics.Debugger.Launch();
+            try
+            {
+                this.Inicializa_TimerExecutarDiario();
+                this.EventLog.WriteEntry("Serviço de integração iniciado às: " + DateTime.Now, EventLogEntryType.Information);
+            }
+            catch (Exception ex)
+            {
+
+                this.EventLog.WriteEntry("Erro ao iniciar serviço: " + ex.Message, EventLogEntryType.Error);
+            }
+        }
+
+        protected override void OnStop()
+        {
+            try
+            {
+                objTimerExecutarDiario.Stop();
+                this.EventLog.WriteEntry("Serviço parado às: " + DateTime.Now, EventLogEntryType.Information);
+            }
+            catch (Exception ex)
+            {
+                this.EventLog.WriteEntry("Erro ao parar serviço : " + ex.Message, EventLogEntryType.Error);
+            }
+        }
+
+        public void Inicializa_TimerExecutarDiario()
+        {
+            objTimerExecutarDiario = new System.Timers.Timer(this.CalcularSobraDia().TotalMilliseconds);
+            objTimerExecutarDiario.Elapsed += new ElapsedEventHandler(TimerExecutarDiario_Elapsed);
+            objTimerExecutarDiario.Start();
+        }
+
+        private TimeSpan CalcularSobraDia()
+        {
+            TimeSpan objTimerAgora = DateTime.Now.TimeOfDay;
+            TimeSpan objTimerDia;
+            TimeSpan objTempoRest;
+
+            //SE INICIAR O SERVIÇO ANTES DO HORARIO DE ENVIO, ESCALONA P ENVIAR NO MESMO DIA NO HORÁRIO INDICADO
+            if (DateTime.Now <= new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 17, 00, 0, 0))
+            {
+                objTimerDia = new TimeSpan(17, 00, 0);
+                objTempoRest = objTimerDia.Subtract(objTimerAgora);
+            }
+            else
+            {
+                objTimerDia = new TimeSpan(24, 0, 0);
+                //SERÁ ENVIADO ÀS 02:00 HORA DA MANHÃ
+                objTempoRest = objTimerDia.Subtract(objTimerAgora).Add(new TimeSpan(17, 00, 0));
+            }
+
+            return objTempoRest;
+        }
+
+        public void TimerExecutarDiario_Elapsed(object sender, ElapsedEventArgs e)
+        {
+            try
+            {
+                objTimerExecutarDiario.Stop();
+                this.EventLog.WriteEntry("Integração de Execução das Ações iniciado às : " + DateTime.Now);
+                this.EnviaWorkflowPendenciaEventoHU();
+                this.EnviaWorkflowPendenciaEventoOP();
+                this.EnviaWorkflowPendenciaEventoCM();
+            }
+            catch (Exception ex)
+            {
+                this.EventLog.WriteEntry("Erro ao executar método [TimerExecutarDiario_Elapsed] : " + ex.Message, EventLogEntryType.Error);
+            }
+            finally
+            {
+                this.EventLog.WriteEntry("Integração de execução das ações finalizado às : " + DateTime.Now, EventLogEntryType.Information);
+                this.Inicializa_TimerExecutarDiario();
+            }
+        }
+
+        private void EnviaWorkflowPendenciaEventoHU()
+        {
+
+            DataTable objDt = null;
+            REHUDAO objREHUDAO = null;
+            PessoasCTL objPessoaCTL = null;
+            ParametroCTL objParametroCTL = null;
+            ProcessoHUDAO objProcessoHUDAO = null;
+            DataRow[] objDrEvento = null;
+
+            string strConteudoEmail = string.Empty;
+
+            //EVENTOS QUE SERÃO ENVIADOS PARA OS COORDENADORES
+            List<EventoPendente> eventosPendCoord = new List<EventoPendente>();
+            //EVENTOS QUE SERÃO ENVIADOS PARA O GERENTE IMEDIATO
+            List<EventoPendente> eventosPendGI = new List<EventoPendente>();
+            //EVENTOS QUE SERÃO ENVIADOS PARA O GERENTE SUPERIOR
+            List<EventoPendente> eventosPendGS = new List<EventoPendente>();
+            //EVENTOS QUE SERÃO ENVIADOS PARA A QUALIDADE
+            List<EventoPendente> eventosPendAnalise = new List<EventoPendente>();
+
+            int tempoCoord = 0;
+            int tempoGI = 0;
+            int tempoGS = 0;
+            int diasVencido = 0;
+            int tempoAnalise = 0;
+
+            try
+            {
+                objREHUDAO = new REHUDAO();
+                objPessoaCTL = new PessoasCTL();
+                objParametroCTL = new ParametroCTL();
+                objProcessoHUDAO = new ProcessoHUDAO();
+                objDt = new DataTable();
+
+
+                List<ProcessoHU> objLstProcessosHU = new List<ProcessoHU>();
+                DataTable objDtProcessos = objREHUDAO.LoadAreasPendenciaEventos();
+                eventosPendAnalise = new List<EventoPendente>();
+
+                for (int i = 0; i < objDtProcessos.Rows.Count; i++)
+                {
+
+                    //PARA CADA AREA LISTAR OS EVENTOS PENDENTES
+                    objDt = objREHUDAO.GetPendenciaEventoPorProcesso(Convert.ToInt32(objDtProcessos.Rows[i]["cd_processo_hu"].ToString()));
+
+                    eventosPendCoord = new List<EventoPendente>();
+                    eventosPendGI = new List<EventoPendente>();
+                    eventosPendGS = new List<EventoPendente>();
+
+
+                    tempoCoord = Convert.ToInt32(objDtProcessos.Rows[i]["wf_tempo_coord"].ToString());
+                    tempoGI = Convert.ToInt32(objDtProcessos.Rows[i]["wf_tempo_gi"].ToString());
+                    tempoGS = Convert.ToInt32(objDtProcessos.Rows[i]["wf_tempo_gs"].ToString());
+                    tempoAnalise = Convert.ToInt32(objDtProcessos.Rows[i]["tempo_analise"].ToString());
+
+                    objDrEvento = objDt.Select("pend_trat <> 0");
+
+                    for (int j = 0; j < objDrEvento.Length; j++)
+                    {
+                        diasVencido = Convert.ToInt32(objDrEvento[j]["pend_trat"].ToString()) - Convert.ToInt32(objDrEvento[j]["dias_trat"].ToString());
+
+                        EventoPendente objEventoPend = new EventoPendente();
+
+                        objEventoPend.cdEvento = Convert.ToInt32(objDrEvento[j]["cd_evento"].ToString());
+
+                        if (objDrEvento[j]["cd_evento_pai"].ToString() != "0")
+                        {
+                            objEventoPend.cdEventoPai = Convert.ToInt32(objDrEvento[j]["cd_evento_pai"].ToString());
+                        }
+
+                        objEventoPend.incidente = objDrEvento[j]["categoria"].ToString();
+                        objEventoPend.status = objDrEvento[j]["status_desc"].ToString();
+                        objEventoPend.intervalo = diasVencido;
+
+                        ProcessoHU objProcessoHU = new ProcessoHU();
+                        objProcessoHU.cdProcessoHU = Convert.ToInt32(objDtProcessos.Rows[i]["cd_processo_hu"].ToString());
+                        objProcessoHU.nmProcesso = objDtProcessos.Rows[i]["nm_processo"].ToString();
+
+                        objEventoPend.ProcessoHU.Add(objProcessoHU);
+
+                        if (diasVencido >= tempoGS)
+                        {
+                            eventosPendGS.Add(objEventoPend);
+                            objREHUDAO.ConfirmarVencimento(objEventoPend.cdEvento);
+                        }
+                        else if (diasVencido >= tempoGI)
+                        {
+                            eventosPendGI.Add(objEventoPend);
+                            objREHUDAO.ConfirmarVencimento(objEventoPend.cdEvento);
+                        }
+                        else if (diasVencido >= tempoCoord)
+                        {
+                            eventosPendCoord.Add(objEventoPend);
+                            objREHUDAO.ConfirmarVencimento(objEventoPend.cdEvento);
+                        }
+
+                    }
+
+                    objDrEvento = objDt.Select("pend_ve <> 0");
+
+                    for (int j = 0; j < objDrEvento.Length; j++)
+                    {
+                        diasVencido = Convert.ToInt32(objDrEvento[j]["pend_ve"].ToString()) - Convert.ToInt32(objDrEvento[j]["tempo_analise"].ToString());
+
+                        EventoPendente objEventoPend = new EventoPendente();
+
+                        objEventoPend.cdEvento = Convert.ToInt32(objDrEvento[j]["cd_evento"].ToString());
+
+                        if (objDrEvento[j]["cd_evento_pai"].ToString() != "0")
+                        {
+                            objEventoPend.cdEventoPai = Convert.ToInt32(objDrEvento[j]["cd_evento_pai"].ToString());
+                        }
+
+                        objEventoPend.incidente = objDrEvento[j]["categoria"].ToString();
+                        objEventoPend.status = objDrEvento[j]["status_desc"].ToString();
+                        objEventoPend.intervalo = diasVencido;
+
+                        ProcessoHU objProcessoHU = new ProcessoHU();
+                        objProcessoHU.cdProcessoHU = Convert.ToInt32(objDtProcessos.Rows[i]["cd_processo_hu"].ToString());
+                        objProcessoHU.nmProcesso = objDtProcessos.Rows[i]["nm_processo"].ToString();
+
+                        objEventoPend.ProcessoHU.Add(objProcessoHU);
+
+                        if (diasVencido >= tempoAnalise)
+                        {
+                            eventosPendAnalise.Add(objEventoPend);
+                            objREHUDAO.ConfirmarVencimento(objEventoPend.cdEvento);
+                        }
+                    }
+
+
+                    #region VENCIMENTO 1 - COORDENAÇÃO
+
+                    if (eventosPendCoord.Count > 0)
+                    {
+                        string emailsCoordenadores = "";
+                        string conteudoCoord = "";
+
+                        String[] coords = objDtProcessos.Rows[i]["coord"].ToString().Split(',');
+
+                        for (int k = 0; k < coords.Length; k++)
+                        {
+                            Pessoa objPessoa = new Pessoa();
+                            objPessoa = objPessoaCTL.GetPessoaId(coords[k]);
+                            emailsCoordenadores += objPessoa.email + ";";
+                        }
+
+                        conteudoCoord = MontarEmail(eventosPendCoord, "H");
+                        EnviarEmailPendenciaTempo(emailsCoordenadores, conteudoCoord);
+                    }
+
+                    #endregion
+
+                    #region VENCIMENTO 2 - GESTOR IMEDIATO
+
+                    if (eventosPendGI.Count > 0)
+                    {
+                        string emailsGI = "";
+                        string conteudoGI = "";
+
+                        String[] gis = objDtProcessos.Rows[i]["gestor"].ToString().Split(',');
+
+                        for (int k = 0; k < gis.Length; k++)
+                        {
+                            Pessoa objPessoa = new Pessoa();
+                            objPessoa = objPessoaCTL.GetPessoaId(gis[k]);
+                            emailsGI += objPessoa.email + ";";
+                        }
+
+                        conteudoGI = MontarEmail(eventosPendGI, "H");
+                        EnviarEmailPendenciaTempo(emailsGI, conteudoGI);
+                    }
+
+                    #endregion
+
+                    #region VENCIMENTO 3 - GESTOR SUPERIOR
+
+                    if (eventosPendGS.Count > 0)
+                    {
+                        string emailGS = "";
+                        string conteudoGS = "";
+
+                        //RETORNA O E-MAIL DO GESTOR SUPERIOR DO HU
+                        emailGS = objParametroCTL.Load(48);
+
+                        conteudoGS = MontarEmail(eventosPendGS, "H");
+                        EnviarEmailPendenciaTempo(emailGS, conteudoGS);
+                    }
+
+                    #endregion
+
+                }
+
+                #region ANALISE CRITICA
+
+                if (eventosPendAnalise.Count > 0)
+                {
+                    string emailQualidade = "";
+                    string conteudoAnalise = "";
+
+                    //RETORNA OS E-MAILS DA QUALIDADE DO HU
+                    emailQualidade = objParametroCTL.Load(57);
+
+                    conteudoAnalise = MontarEmailQualidade(eventosPendAnalise, "H");
+                    EnviarEmailPendenciaTempo(emailQualidade, conteudoAnalise);
+                }
+
+                #endregion
+
+            }
+
+            catch (Exception ex)
+            {
+                System.IO.File.WriteAllText(@"C:\log.txt", ex.Message);
+
+                throw new Exception("Erro: " + ex.Message);
+            }
+            finally
+            {
+                objDt = null;
+                objREHUDAO = null;
+                objPessoaCTL = null;
+                objProcessoHUDAO = null;
+            }
+        }
+
+        private void EnviaWorkflowPendenciaEventoOP()
+        {
+
+            DataTable objDt = null;
+            REOPDAO objREOPDAO = null;
+            PessoasCTL objPessoaCTL = null;
+            ParametroCTL objParametroCTL = null;
+            AreaDAO objAreaDAO = null;
+            DataRow[] objDrEvento = null;
+
+            string strConteudoEmail = string.Empty;
+
+            //EVENTOS QUE SERÃO ENVIADOS PARA OS COORDENADORES
+            List<EventoPendente> eventosPendCoord = new List<EventoPendente>();
+            //EVENTOS QUE SERÃO ENVIADOS PARA O GERENTE IMEDIATO
+            List<EventoPendente> eventosPendGI = new List<EventoPendente>();
+            //EVENTOS QUE SERÃO ENVIADOS PARA O GERENTE SUPERIOR
+            List<EventoPendente> eventosPendGS = new List<EventoPendente>();
+            //EVENTOS QUE SERÃO ENVIADOS PARA A QUALIDADE
+            List<EventoPendente> eventosPendAnalise = new List<EventoPendente>();
+
+            int tempoCoord = 0;
+            int tempoGI = 0;
+            int tempoGS = 0;
+            int diasVencido = 0;
+            int tempoAnalise = 0;
+
+            try
+            {
+                objREOPDAO = new REOPDAO();
+                objPessoaCTL = new PessoasCTL();
+                objParametroCTL = new ParametroCTL();
+                objAreaDAO = new AreaDAO();
+                objDt = new DataTable();
+
+
+                List<Area> objLstArea = new List<Area>();
+                DataTable objDtAreas = objREOPDAO.LoadAreasPendenciaEventos();
+
+                eventosPendAnalise = new List<EventoPendente>();
+
+                for (int i = 0; i < objDtAreas.Rows.Count; i++)
+                {
+
+                    //PARA CADA AREA LISTAR OS EVENTOS PENDENTES
+                    objDt = objREOPDAO.GetPendenciaEventoPorArea(Convert.ToInt32(objDtAreas.Rows[i]["cd_area_destino"].ToString()));
+
+                    eventosPendCoord = new List<EventoPendente>();
+                    eventosPendGI = new List<EventoPendente>();
+                    eventosPendGS = new List<EventoPendente>();
+
+
+                    tempoCoord = Convert.ToInt32(objDtAreas.Rows[i]["wf_tempo_coord"].ToString());
+                    tempoGI = Convert.ToInt32(objDtAreas.Rows[i]["wf_tempo_gi"].ToString());
+                    tempoGS = Convert.ToInt32(objDtAreas.Rows[i]["wf_tempo_gs"].ToString());
+                    tempoAnalise = Convert.ToInt32(objDtAreas.Rows[i]["tempo_analise"].ToString());
+
+                    objDrEvento = objDt.Select("pend_trat <> 0");
+
+                    for (int j = 0; j < objDrEvento.Length; j++)
+                    {
+                        diasVencido = Convert.ToInt32(objDrEvento[j]["pend_trat"].ToString()) - Convert.ToInt32(objDrEvento[j]["dias_trat"].ToString());
+
+                        EventoPendente objEventoPend = new EventoPendente();
+
+                        objEventoPend.cdEvento = Convert.ToInt32(objDrEvento[j]["cd_evento"].ToString());
+
+                        if (objDrEvento[j]["cd_evento_pai"].ToString() != "0")
+                        {
+                            objEventoPend.cdEventoPai = Convert.ToInt32(objDrEvento[j]["cd_evento_pai"].ToString());
+                        }
+
+                        objEventoPend.incidente = objDrEvento[j]["processo"].ToString();
+                        objEventoPend.status = objDrEvento[j]["status_desc"].ToString();
+                        objEventoPend.intervalo = diasVencido;
+
+                        Area objArea = new Area();
+                        objArea.cdArea = Convert.ToInt32(objDtAreas.Rows[i]["cd_area_destino"].ToString());
+                        objArea.nmArea = objDtAreas.Rows[i]["nm_area"].ToString();
+
+                        objEventoPend.Area.Add(objArea);
+
+                        if (diasVencido >= tempoGS)
+                        {
+                            eventosPendGS.Add(objEventoPend);
+                            objREOPDAO.ConfirmarVencimento(objEventoPend.cdEvento);
+                        }
+                        else if (diasVencido >= tempoGI)
+                        {
+                            eventosPendGI.Add(objEventoPend);
+                            objREOPDAO.ConfirmarVencimento(objEventoPend.cdEvento);
+                        }
+                        else if (diasVencido >= tempoCoord)
+                        {
+                            eventosPendCoord.Add(objEventoPend);
+                            objREOPDAO.ConfirmarVencimento(objEventoPend.cdEvento);
+                        }
+
+                    }
+
+                    objDrEvento = objDt.Select("pend_ve <> 0");
+
+                    for (int j = 0; j < objDrEvento.Length; j++)
+                    {
+                        diasVencido = Convert.ToInt32(objDrEvento[j]["pend_ve"].ToString()) - Convert.ToInt32(objDrEvento[j]["tempo_analise"].ToString());
+
+                        EventoPendente objEventoPend = new EventoPendente();
+
+                        objEventoPend.cdEvento = Convert.ToInt32(objDrEvento[j]["cd_evento"].ToString());
+
+                        if (objDrEvento[j]["cd_evento_pai"].ToString() != "0")
+                        {
+                            objEventoPend.cdEventoPai = Convert.ToInt32(objDrEvento[j]["cd_evento_pai"].ToString());
+                        }
+
+                        objEventoPend.incidente = objDrEvento[j]["processo"].ToString();
+                        objEventoPend.status = objDrEvento[j]["status_desc"].ToString();
+                        objEventoPend.intervalo = diasVencido;
+
+                        Area objArea = new Area();
+                        objArea.cdArea = Convert.ToInt32(objDtAreas.Rows[i]["cd_area_destino"].ToString());
+                        objArea.nmArea = objDtAreas.Rows[i]["nm_area"].ToString();
+
+                        objEventoPend.Area.Add(objArea);
+
+                        if (diasVencido >= tempoAnalise)
+                        {
+                            eventosPendAnalise.Add(objEventoPend);
+                            objREOPDAO.ConfirmarVencimento(objEventoPend.cdEvento);
+                        }
+                    }
+
+
+                    #region VENCIMENTO 1 - COORDENAÇÃO
+
+                    if (eventosPendCoord.Count > 0)
+                    {
+                        string emailsCoordenadores = "";
+                        string conteudoCoord = "";
+
+                        if (objDtAreas.Rows[i]["coord"].ToString() != "")
+                        {
+                            String[] coords = objDtAreas.Rows[i]["coord"].ToString().Split(',');
+
+                            for (int k = 0; k < coords.Length; k++)
+                            {
+                                Pessoa objPessoa = new Pessoa();
+                                objPessoa = objPessoaCTL.GetPessoaId(coords[k]);
+                                emailsCoordenadores += objPessoa.email + ";";
+                            }
+
+                            conteudoCoord = MontarEmail(eventosPendCoord, "O");
+                            EnviarEmailPendenciaTempo(emailsCoordenadores, conteudoCoord);
+                        }
+                    }
+
+                    #endregion
+
+                    #region VENCIMENTO 2 - GESTOR IMEDIATO
+
+                    if (eventosPendGI.Count > 0)
+                    {
+                        string emailsGI = "";
+                        string conteudoGI = "";
+
+                        if (objDtAreas.Rows[i]["gestor"].ToString() != "")
+                        {
+                            String[] gis = objDtAreas.Rows[i]["gestor"].ToString().Split(',');
+
+                            for (int k = 0; k < gis.Length; k++)
+                            {
+                                Pessoa objPessoa = new Pessoa();
+                                objPessoa = objPessoaCTL.GetPessoaId(gis[k]);
+                                emailsGI += objPessoa.email + ";";
+                            }
+
+                            conteudoGI = MontarEmail(eventosPendGI, "O");
+                            EnviarEmailPendenciaTempo(emailsGI, conteudoGI);
+                        }
+                    }
+
+                    #endregion
+
+                    #region VENCIMENTO 3 - GESTOR SUPERIOR
+
+                    if (eventosPendGS.Count > 0)
+                    {
+                        string emailGS = "";
+                        string conteudoGS = "";
+
+                        //RETORNA O E-MAIL DO GESTOR SUPERIOR DO OP
+                        emailGS = objParametroCTL.Load(58);
+
+                        conteudoGS = MontarEmail(eventosPendGS, "O");
+                        EnviarEmailPendenciaTempo(emailGS, conteudoGS);
+                    }
+
+                    #endregion
+
+
+
+                }
+
+                #region ANALISE CRITICA
+
+                if (eventosPendAnalise.Count > 0)
+                {
+                    string emailQualidade = "";
+                    string conteudoAnalise = "";
+
+                    //RETORNA OS E-MAILS DA QUALIDADE DO HU
+                    emailQualidade = objParametroCTL.Load(56);
+
+                    conteudoAnalise = MontarEmailQualidade(eventosPendAnalise, "O");
+                    EnviarEmailPendenciaTempo(emailQualidade, conteudoAnalise);
+                }
+
+                #endregion
+
+            }
+
+            catch (Exception ex)
+            {
+                System.IO.File.WriteAllText(@"C:\log.txt", ex.Message);
+
+                throw new Exception("Erro: " + ex.Message);
+            }
+            finally
+            {
+                objDt = null;
+                objREOPDAO = null;
+                objPessoaCTL = null;
+                objAreaDAO = null;
+            }
+        }
+
+        private void EnviaWorkflowPendenciaEventoCM()
+        {
+
+            DataTable objDt = null;
+            RECMDAO objRECMDAO = null;
+            PessoasCTL objPessoaCTL = null;
+            ParametroCTL objParametroCTL = null;
+            ProcessoHUDAO objProcessoHUDAO = null;
+            DataRow[] objDrEvento = null;
+
+            string strConteudoEmail = string.Empty;
+
+            //EVENTOS QUE SERÃO ENVIADOS PARA OS COORDENADORES
+            List<EventoPendente> eventosPendCoord = new List<EventoPendente>();
+            //EVENTOS QUE SERÃO ENVIADOS PARA O GERENTE IMEDIATO
+            List<EventoPendente> eventosPendGI = new List<EventoPendente>();
+            //EVENTOS QUE SERÃO ENVIADOS PARA O GERENTE SUPERIOR
+            List<EventoPendente> eventosPendGS = new List<EventoPendente>();
+            //EVENTOS QUE SERÃO ENVIADOS PARA A QUALIDADE
+            List<EventoPendente> eventosPendAnalise = new List<EventoPendente>();
+
+            int tempoCoord = 0;
+            int tempoGI = 0;
+            int tempoGS = 0;
+            int diasVencido = 0;
+            int tempoAnalise = 0;
+
+            try
+            {
+                objRECMDAO = new RECMDAO();
+                objPessoaCTL = new PessoasCTL();
+                objParametroCTL = new ParametroCTL();
+                objProcessoHUDAO = new ProcessoHUDAO();
+                objDt = new DataTable();
+
+
+                List<ProcessoHU> objLstProcessosHU = new List<ProcessoHU>();
+                DataTable objDtProcessos = objRECMDAO.LoadAreasPendenciaEventos();
+
+                eventosPendAnalise = new List<EventoPendente>();
+
+                for (int i = 0; i < objDtProcessos.Rows.Count; i++)
+                {
+
+                    //PARA CADA AREA LISTAR OS EVENTOS PENDENTES
+                    objDt = objRECMDAO.GetPendenciaEventoPorProcesso(Convert.ToInt32(objDtProcessos.Rows[i]["cd_processo_hu"].ToString()));
+
+                    eventosPendCoord = new List<EventoPendente>();
+                    eventosPendGI = new List<EventoPendente>();
+                    eventosPendGS = new List<EventoPendente>();
+
+
+                    tempoCoord = Convert.ToInt32(objDtProcessos.Rows[i]["wf_tempo_coord"].ToString());
+                    tempoGI = Convert.ToInt32(objDtProcessos.Rows[i]["wf_tempo_gi"].ToString());
+                    tempoGS = Convert.ToInt32(objDtProcessos.Rows[i]["wf_tempo_gs"].ToString());
+                    tempoAnalise = Convert.ToInt32(objDtProcessos.Rows[i]["tempo_analise"].ToString());
+
+                    objDrEvento = objDt.Select("pend_trat <> 0");
+
+                    for (int j = 0; j < objDrEvento.Length; j++)
+                    {
+                        diasVencido = Convert.ToInt32(objDrEvento[j]["pend_trat"].ToString()) - Convert.ToInt32(objDrEvento[j]["dias_trat"].ToString());
+
+                        EventoPendente objEventoPend = new EventoPendente();
+
+                        objEventoPend.cdEvento = Convert.ToInt32(objDrEvento[j]["cd_evento"].ToString());
+                        objEventoPend.incidente = objDrEvento[j]["categoria"].ToString();
+                        objEventoPend.status = objDrEvento[j]["status_desc"].ToString();
+                        objEventoPend.intervalo = diasVencido;
+
+                        ProcessoHU objProcessoHU = new ProcessoHU();
+                        objProcessoHU.cdProcessoHU = Convert.ToInt32(objDtProcessos.Rows[i]["cd_processo_hu"].ToString());
+                        objProcessoHU.nmProcesso = objDtProcessos.Rows[i]["nm_processo"].ToString();
+
+                        objEventoPend.ProcessoHU.Add(objProcessoHU);
+
+                        if (diasVencido >= tempoGS)
+                        {
+                            eventosPendGS.Add(objEventoPend);
+                            objRECMDAO.ConfirmarVencimento(objEventoPend.cdEvento);
+                        }
+                        else if (diasVencido >= tempoGI)
+                        {
+                            eventosPendGI.Add(objEventoPend);
+                            objRECMDAO.ConfirmarVencimento(objEventoPend.cdEvento);
+                        }
+                        else if (diasVencido >= tempoCoord)
+                        {
+                            eventosPendCoord.Add(objEventoPend);
+                            objRECMDAO.ConfirmarVencimento(objEventoPend.cdEvento);
+                        }
+
+                    }
+
+                    objDrEvento = objDt.Select("pend_ve <> 0");
+
+                    for (int j = 0; j < objDrEvento.Length; j++)
+                    {
+                        diasVencido = Convert.ToInt32(objDrEvento[j]["pend_ve"].ToString()) - Convert.ToInt32(objDrEvento[j]["tempo_analise"].ToString());
+
+                        EventoPendente objEventoPend = new EventoPendente();
+
+                        objEventoPend.cdEvento = Convert.ToInt32(objDrEvento[j]["cd_evento"].ToString());
+                        objEventoPend.incidente = objDrEvento[j]["categoria"].ToString();
+                        objEventoPend.status = objDrEvento[j]["status_desc"].ToString();
+                        objEventoPend.intervalo = diasVencido;
+
+                        ProcessoHU objProcessoHU = new ProcessoHU();
+                        objProcessoHU.cdProcessoHU = Convert.ToInt32(objDtProcessos.Rows[i]["cd_processo_hu"].ToString());
+                        objProcessoHU.nmProcesso = objDtProcessos.Rows[i]["nm_processo"].ToString();
+
+                        objEventoPend.ProcessoHU.Add(objProcessoHU);
+
+                        if (diasVencido >= tempoAnalise)
+                        {
+                            eventosPendAnalise.Add(objEventoPend);
+                            objRECMDAO.ConfirmarVencimento(objEventoPend.cdEvento);
+                        }
+                    }
+
+
+                    #region VENCIMENTO 1 - COORDENAÇÃO
+
+                    if (eventosPendCoord.Count > 0)
+                    {
+                        string emailsCoordenadores = "";
+                        string conteudoCoord = "";
+
+                        String[] coords = objDtProcessos.Rows[i]["coord"].ToString().Split(',');
+
+                        for (int k = 0; k < coords.Length; k++)
+                        {
+                            Pessoa objPessoa = new Pessoa();
+                            objPessoa = objPessoaCTL.GetPessoaId(coords[k]);
+                            emailsCoordenadores += objPessoa.email + ";";
+                        }
+
+                        conteudoCoord = MontarEmail(eventosPendCoord, "C");
+                        EnviarEmailPendenciaTempo(emailsCoordenadores, conteudoCoord);
+                    }
+
+                    #endregion
+
+                    #region VENCIMENTO 2 - GESTOR IMEDIATO
+
+                    if (eventosPendGI.Count > 0)
+                    {
+                        string emailsGI = "";
+                        string conteudoGI = "";
+
+                        String[] gis = objDtProcessos.Rows[i]["gestor"].ToString().Split(',');
+
+                        for (int k = 0; k < gis.Length; k++)
+                        {
+                            Pessoa objPessoa = new Pessoa();
+                            objPessoa = objPessoaCTL.GetPessoaId(gis[k]);
+                            emailsGI += objPessoa.email + ";";
+                        }
+
+                        conteudoGI = MontarEmail(eventosPendGI, "C");
+                        EnviarEmailPendenciaTempo(emailsGI, conteudoGI);
+                    }
+
+                    #endregion
+
+                    #region VENCIMENTO 3 - GESTOR SUPERIOR
+
+                    if (eventosPendGS.Count > 0)
+                    {
+                        string emailGS = "";
+                        string conteudoGS = "";
+
+                        //RETORNA O E-MAIL DO GESTOR SUPERIOR DO HU
+                        emailGS = objParametroCTL.Load(48);
+
+                        conteudoGS = MontarEmail(eventosPendGS, "C");
+                        EnviarEmailPendenciaTempo(emailGS, conteudoGS);
+                    }
+
+                    #endregion
+
+
+
+                }
+
+                #region ANALISE CRITICA
+
+                if (eventosPendAnalise.Count > 0)
+                {
+                    string emailQualidade = "";
+                    string conteudoAnalise = "";
+
+                    //RETORNA OS E-MAILS DA QUALIDADE DO HU
+                    emailQualidade = objParametroCTL.Load(57);
+
+                    conteudoAnalise = MontarEmailQualidade(eventosPendAnalise, "C");
+                    EnviarEmailPendenciaTempo(emailQualidade, conteudoAnalise);
+                }
+
+                #endregion
+
+            }
+
+            catch (Exception ex)
+            {
+                System.IO.File.WriteAllText(@"C:\log.txt", ex.Message);
+
+                throw new Exception("Erro: " + ex.Message);
+            }
+            finally
+            {
+                objDt = null;
+                objRECMDAO = null;
+                objPessoaCTL = null;
+                objProcessoHUDAO = null;
+            }
+        }
+
+        public void EnviarEmailPendenciaTempo(string strEmail, string strEventos)
+        {
+            string strConteudo = string.Empty,
+                   strEmails = string.Empty;
+
+            StringBuilder objHTML = null;
+
+            try
+            {
+
+                objHTML = new StringBuilder();
+                objHTML.Append(Email.HtmlEmail());
+
+                objHTML.Replace("@HTML_TITULO", "PENDÊNCIA DE EVENTOS");
+                //objHTML.Replace("@HTML_SUBTITULO", "Registro de evento relacionado à assistência/RISCO");
+
+
+                objHTML.Replace("@HTML_IMAGEMTOPO", "<img src=\"http://www.unimedsulcapixaba.com.br/intranet/topoqualidade.png\"/>  ");
+
+                strConteudo = "  <tr> ";
+                strConteudo = strConteudo + " <td align=\"center\" valign=\"top\"> ";
+                strConteudo = strConteudo + " <table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"100%\" id=\"templateBody\"> ";
+                strConteudo = strConteudo + " <tr> ";
+                strConteudo = strConteudo + " <td valign=\"top\" class=\"bodyContent\" mc:edit=\"body_content\"> ";
+                strConteudo = strConteudo + " </br> ";
+
+                strConteudo = strConteudo + strEventos;
+
+                strConteudo = strConteudo + "<tr style=\"background-color:#d4d4d4\">";
+                strConteudo = strConteudo + "<td>";
+                strConteudo = strConteudo + " <h4 style=\"text-align:center; color:#767676 !important; font-weight:bold; font-size:12px; padding-top:3px;\">Visando a segurança do paciente, qualidade e sustentabilidade da empresa, solicitamos que " +
+                                           "realize análise de causa raiz para tratar adequadamente o problema e evitar que ele torne a acontecer.</h4> ";
+                strConteudo = strConteudo + "</td>";
+                strConteudo = strConteudo + "</tr>";
+                strConteudo = strConteudo + " </td> ";
+                strConteudo = strConteudo + " </tr> ";
+                strConteudo = strConteudo + " </table> ";
+                strConteudo = strConteudo + " </td> ";
+                strConteudo = strConteudo + " </tr> ";
+
+
+
+                objHTML.Replace("@HTML_CONTEUDO", strConteudo);
+
+                objHTML.Replace("@HTML_RODAPE", string.Empty);
+
+
+                Email.EnviarEmail("[QUALIDADE] - Eventos Pendentes", objHTML.ToString(), strEmail);
+
+                //string[] aEmails = ra.emails.Split(';');
+
+                //for (int i = 0; i < aEmails.Length; i++)
+                //{
+                //    EMail.EnviarEmail("[INTRANET] - Novo evento registrado (" + strIncidente + ")", objHTML.ToString(), aEmails.GetValue(i).ToString());
+                //}
+            }
+            catch
+            {
+
+            }
+            finally
+            {
+                objHTML = null;
+            }
+        }
+
+        public String MontarEmail(List<EventoPendente> eventos, String tipo)
+        {
+            string strConteudo = string.Empty;
+
+            if (tipo == "H")
+            {
+                strConteudo = strConteudo + "<h4>Processo: " + eventos[0].ProcessoHU[0].nmProcesso + "</h4>";
+                strConteudo = strConteudo + "<table border=1 style=\"font-size:10px;\">";
+                strConteudo = strConteudo + "  <tr>";
+                strConteudo = strConteudo + "    <th style=\"text-align:center; padding:0px 5px 0px 5px;\">Evento</th>";
+                strConteudo = strConteudo + "    <th style=\"text-align:center; padding:0px 5px 0px 5px;\">Evento Pai</th>";
+                strConteudo = strConteudo + "    <th style=\"text-align:center; padding:0px 5px 0px 5px;\">Dias Vencido</th>";
+                strConteudo = strConteudo + "    <th>Categoria</th>";
+                strConteudo = strConteudo + "    <th style=\"text-align:center;\">Status</th>";
+                //strConteudo = strConteudo + "    <th></th>";
+                strConteudo = strConteudo + "  </tr>";
+
+                for (int i = 0; i < eventos.Count; i++)
+                {
+                    strConteudo = strConteudo + "  <tr>";
+                    strConteudo = strConteudo + "    <td style=\"text-align:center;\">" + eventos[i].cdEvento + "</td>";
+                    strConteudo = strConteudo + "    <td style=\"text-align:center;\">" + eventos[i].cdEventoPai + "</td>";
+                    strConteudo = strConteudo + "    <td style=\"text-align:center;\">" + eventos[i].intervalo.ToString().ToUpper() + "</td>";
+                    strConteudo = strConteudo + "    <td>" + eventos[i].incidente + "</td>";
+                    strConteudo = strConteudo + "    <td style=\"text-align:center;\">" + eventos[i].status + "</td>";
+                    strConteudo = strConteudo + "  </tr>";
+                }
+
+
+                strConteudo = strConteudo + "  </table>";
+            }
+            else if (tipo == "O")
+            {
+                strConteudo = strConteudo + "<h4>Área: " + eventos[0].Area[0].nmArea + "</h4>";
+                strConteudo = strConteudo + "<table border=1 style=\"font-size:10px;\">";
+                strConteudo = strConteudo + "  <tr>";
+                strConteudo = strConteudo + "    <th style=\"text-align:center; padding:0px 5px 0px 5px;\">Evento</th>";
+                strConteudo = strConteudo + "    <th style=\"text-align:center; padding:0px 5px 0px 5px;\">Evento Pai</th>";
+                strConteudo = strConteudo + "    <th style=\"text-align:center; padding:0px 5px 0px 5px;\">Dias Vencido</th>";
+                strConteudo = strConteudo + "    <th>Processo</th>";
+                strConteudo = strConteudo + "    <th style=\"text-align:center;\">Status</th>";
+                //strConteudo = strConteudo + "    <th></th>";
+                strConteudo = strConteudo + "  </tr>";
+
+                for (int i = 0; i < eventos.Count; i++)
+                {
+                    strConteudo = strConteudo + "  <tr>";
+                    strConteudo = strConteudo + "    <td style=\"text-align:center;\">" + eventos[i].cdEvento + "</td>";
+                    strConteudo = strConteudo + "    <td style=\"text-align:center;\">" + eventos[i].cdEventoPai + "</td>";
+                    strConteudo = strConteudo + "    <td style=\"text-align:center;\">" + eventos[i].intervalo.ToString().ToUpper() + "</td>";
+                    strConteudo = strConteudo + "    <td>" + eventos[i].incidente + "</td>";
+                    strConteudo = strConteudo + "    <td style=\"text-align:center;\">" + eventos[i].status + "</td>";
+                    strConteudo = strConteudo + "  </tr>";
+                }
+
+
+                strConteudo = strConteudo + "  </table>";
+            }
+            else if (tipo == "C")
+            {
+                strConteudo = strConteudo + "<h4>Processo: " + eventos[0].ProcessoHU[0].nmProcesso + "</h4>";
+                strConteudo = strConteudo + "<table border=1 style=\"font-size:10px;\">";
+                strConteudo = strConteudo + "  <tr>";
+                strConteudo = strConteudo + "    <th style=\"text-align:center; padding:0px 5px 0px 5px;\">Evento</th>";
+                strConteudo = strConteudo + "    <th style=\"text-align:center; padding:0px 5px 0px 5px;\">Dias Vencido</th>";
+                strConteudo = strConteudo + "    <th>Processo</th>";
+                strConteudo = strConteudo + "    <th style=\"text-align:center;\">Status</th>";
+                //strConteudo = strConteudo + "    <th></th>";
+                strConteudo = strConteudo + "  </tr>";
+
+                for (int i = 0; i < eventos.Count; i++)
+                {
+                    strConteudo = strConteudo + "  <tr>";
+                    strConteudo = strConteudo + "    <td style=\"text-align:center;\">" + eventos[i].cdEvento + "</td>";
+                    strConteudo = strConteudo + "    <td style=\"text-align:center;\">" + eventos[i].intervalo.ToString().ToUpper() + "</td>";
+                    strConteudo = strConteudo + "    <td>" + eventos[i].incidente + "</td>";
+                    strConteudo = strConteudo + "    <td style=\"text-align:center;\">" + eventos[i].status + "</td>";
+                    strConteudo = strConteudo + "  </tr>";
+                }
+
+
+                strConteudo = strConteudo + "  </table>";
+            }
+            return strConteudo;
+
+        }
+
+        public String MontarEmailQualidade(List<EventoPendente> eventos, String tipo)
+        {
+            string strConteudo = string.Empty;
+
+
+            if (tipo == "H" || tipo == "C")
+            {
+                strConteudo = strConteudo + "<table border=1 style=\"font-size:10px;\">";
+                strConteudo = strConteudo + "  <tr>";
+                strConteudo = strConteudo + "    <th style=\"text-align:center; padding:0px 5px 0px 5px;\">Evento</th>";
+                strConteudo = strConteudo + "    <th style=\"text-align:center; padding:0px 5px 0px 5px;\">Evento Pai</th>";
+                strConteudo = strConteudo + "    <th style=\"text-align:center; padding:0px 5px 0px 5px;\">Processo</th>";
+                strConteudo = strConteudo + "    <th style=\"text-align:center; padding:0px 5px 0px 5px;\">Dias Vencido</th>";
+                strConteudo = strConteudo + "    <th>Categoria</th>";
+                strConteudo = strConteudo + "    <th style=\"text-align:center;\">Status</th>";
+                //strConteudo = strConteudo + "    <th></th>";
+                strConteudo = strConteudo + "  </tr>";
+
+                for (int i = 0; i < eventos.Count; i++)
+                {
+                    strConteudo = strConteudo + "  <tr>";
+                    strConteudo = strConteudo + "    <td style=\"text-align:center;\">" + eventos[i].cdEvento + "</td>";
+                    strConteudo = strConteudo + "    <td style=\"text-align:center;\">" + eventos[i].cdEventoPai + "</td>";
+                    strConteudo = strConteudo + "    <td style=\"text-align:center;\">" + eventos[0].ProcessoHU[0].nmProcesso + "</td>";
+                    strConteudo = strConteudo + "    <td style=\"text-align:center;\">" + eventos[i].intervalo.ToString().ToUpper() + "</td>";
+                    strConteudo = strConteudo + "    <td>" + eventos[i].incidente + "</td>";
+                    strConteudo = strConteudo + "    <td style=\"text-align:center;\">" + eventos[i].status + "</td>";
+                    strConteudo = strConteudo + "  </tr>";
+                }
+
+
+                strConteudo = strConteudo + "  </table>";
+            }
+            else if (tipo == "O")
+            {
+                strConteudo = strConteudo + "<table border=1 style=\"font-size:10px;\">";
+                strConteudo = strConteudo + "  <tr>";
+                strConteudo = strConteudo + "    <th style=\"text-align:center; padding:0px 5px 0px 5px;\">Evento</th>";
+                strConteudo = strConteudo + "    <th style=\"text-align:center; padding:0px 5px 0px 5px;\">Evento Pai</th>";
+                strConteudo = strConteudo + "    <th style=\"text-align:center; padding:0px 5px 0px 5px;\">Área</th>";
+                strConteudo = strConteudo + "    <th style=\"text-align:center; padding:0px 5px 0px 5px;\">Dias Vencido</th>";
+                strConteudo = strConteudo + "    <th>Categoria</th>";
+                strConteudo = strConteudo + "    <th style=\"text-align:center;\">Status</th>";
+                //strConteudo = strConteudo + "    <th></th>";
+                strConteudo = strConteudo + "  </tr>";
+
+                for (int i = 0; i < eventos.Count; i++)
+                {
+                    strConteudo = strConteudo + "  <tr>";
+                    strConteudo = strConteudo + "    <td style=\"text-align:center;\">" + eventos[i].cdEvento + "</td>";
+                    strConteudo = strConteudo + "    <td style=\"text-align:center;\">" + eventos[i].cdEventoPai + "</td>";
+                    strConteudo = strConteudo + "    <td style=\"text-align:center;\">" + eventos[0].Area[0].nmArea + "</td>";
+                    strConteudo = strConteudo + "    <td style=\"text-align:center;\">" + eventos[i].intervalo.ToString().ToUpper() + "</td>";
+                    strConteudo = strConteudo + "    <td>" + eventos[i].incidente + "</td>";
+                    strConteudo = strConteudo + "    <td style=\"text-align:center;\">" + eventos[i].status + "</td>";
+                    strConteudo = strConteudo + "  </tr>";
+                }
+
+
+                strConteudo = strConteudo + "  </table>";
+            }
+
+            return strConteudo;
+
+        }
+    }
+
+    public class EventoPendente
+    {
+        public int cdEvento { get; set; }
+        public int cdEventoPai { get; set; }
+        public string incidente { get; set; }
+        public int intervalo { get; set; }
+        public string email { get; set; }
+        public int tratador { get; set; }
+        public string status { get; set; }
+
+        private List<ProcessoHU> objLstProcessoHU = new List<ProcessoHU>();
+        public List<ProcessoHU> ProcessoHU
+        {
+            get { return objLstProcessoHU; }
+            set { objLstProcessoHU = value; }
+        }
+
+        private List<Area> objLstArea = new List<Area>();
+        public List<Area> Area
+        {
+            get { return objLstArea; }
+            set { objLstArea = value; }
+        }
+    }
+}
