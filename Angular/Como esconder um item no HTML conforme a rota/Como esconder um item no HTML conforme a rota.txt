@@ -1,0 +1,18 @@
+Como esconder um item no HTML conforme a rota, Ex.:
+
+
+constructor(private router: Router) { 
+        router.events.subscribe(() =>{
+            const url = window.location.href
+            if(url.includes('pendencias') || url.includes('engajamento') || 
+            url.includes('especialidade') || url.includes('detalhes') || 
+            url.includes('plantonista') || url.includes('programa'))
+            {
+                this.sn_Exibe_Header = false
+
+            }else{
+
+                this.sn_Exibe_Header = true
+            }
+        })
+    }
