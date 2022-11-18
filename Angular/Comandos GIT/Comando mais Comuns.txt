@@ -9,6 +9,7 @@ git add .
 git commit -m "primeiro commit"
 
 git remote add origin <link do repositorio>
+
 -------------------------------------------------------------------------------------
 
 ALTERAR O LINK DO REPOSITORIO
@@ -16,6 +17,12 @@ ALTERAR O LINK DO REPOSITORIO
 git remote remove origin
 
 git remote add origin <link do repositorio>
+
+-------------------------------------------------------------------------------------
+
+ERRO REALCIONADO AO SSL CERTIFICADO
+
+git -c http.sslVerify=false clone <repository-name>
 -------------------------------------------------------------------------------------
 
 COMANDOS IMPORTANTES
@@ -25,6 +32,7 @@ git remote
 git remote -v
 
 git status
+
 -------------------------------------------------------------------------------------
 
 
@@ -37,11 +45,13 @@ git add .
 git commit -m "nome do commit"
 
 git push origin brench-novo
+
 -------------------------------------------------------------------------------------
 
 VOLTANDO NAVEGANDO ENTRE AS BRENCH'S
 
 git checkout main
+
 -------------------------------------------------------------------------------------
 
 MERGE DE BRENCH'S
@@ -55,6 +65,7 @@ git add .
 git commit -m "commit-merge"
 
 git push origin main
+
 -------------------------------------------------------------------------------------
 
 VOLTANDO PARA UM COMMIT ESPECÍFICO
