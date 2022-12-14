@@ -1,0 +1,17 @@
+Input text aceitar somente números:
+
+
+1° Na tag input no html, adicione: (keypress)="VerifyCharacter($event)"
+
+2° No arquivo TS: 
+
+
+   VerifyCharacter(event) {
+        var charCode = (event.which) ? event.which : event.keyCode;
+        if ((charCode < 48 || charCode > 57)) {
+            event.preventDefault();
+            return false;
+        } else {
+            return true;
+        }
+    }

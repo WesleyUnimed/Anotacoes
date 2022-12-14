@@ -1,0 +1,14 @@
+Tabela em lock Mysql:
+
+
+1° Vá no Debeaver => Banco de dados => Ferramentas => Gerenciar sessões
+
+2° Veja qual processo que está travando, botão direito => Kill ou Termitade query
+
+
+ Caso aconteça de não resolver, você pode tantar reparar a tabela. OBS.: Isso vai travar toda a tabela
+
+
+Como rodar o Repair:
+
+1° Botão direito em cima da tabela => Ferramentas => Repair
