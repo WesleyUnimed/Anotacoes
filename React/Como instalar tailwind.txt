@@ -1,0 +1,25 @@
+Instalar tailwind no React
+
+1° rode o comando: npm install -D tailwindcss
+
+
+2° em seguida rode: npx tailwindcss init -p
+
+
+3° no arquivo tailwind.config.cjs em content, adicione:
+
+content: [
+    './src/**/*.tsx'
+  ],
+
+
+4° em styles/global.css adicione:
+
+@tailwind base;
+@tailwind utilities;
+@tailwind components;
+
+
+5° faça a importação no componente:
+
+import './styles/global.css';

@@ -1,0 +1,29 @@
+Como fazer Deploy do StoryBook com GithubActions
+
+
+1° Instale a seguinte dependencia:  npm i @storybook/storybook-deployer --save-dev
+
+2° Cole os seguintes comandos no script do package Json: 
+
+"deploy-storybook": "storybook-to-ghpages"
+deploy-storybook": "storybook-to-ghpages"
+
+
+
+3° Rode o comando de build: npm run build-storybook
+
+4° Adicionar a pasta storybook-static no git-ignore:
+# Storybook
+storybook-static
+
+5° No meu caso eu criei um arquivo .yml dentro da pasta na raiz do projeto: .github/workflows/deploy-docs.yml
+
+6° Dentro do arquivo main.cjs na pasta storybook eu adicionei o seguinte comando que serve para que o storybook não se perca com o nome do repositório do github:
+
+viteFinal: (config, { configType }) => {
+    if (configType === 'PRODUCTION') {
+      config.base = '/ignite-lab-design-system/'
+    }
+
+    return config
+  }

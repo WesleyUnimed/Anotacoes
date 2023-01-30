@@ -1,0 +1,47 @@
+1° É nescessário instalar: npm i class-validator class-transformer
+
+2° No seu arquivo .pipe.ts,cole a função abaixo que é um esqueleto de um pipe customizado:
+
+import { registerDecorator, ValidationArguments, ValidationOptions, ValidatorConstraint, ValidatorConstraintInterface } from 'class-validator';
+
+export function NomedoPipeDecorator(validationOption?: ValidationOptions) {
+  return function (object: Object, propertyName: string) {
+    registerDecorator({
+      target: object.constructor,
+      propertyName: propertyName,
+      options: validationOption,
+      constraints: [],
+      validator: NomedoValidador
+    })
+  }
+}
+
+
+3° Exemplo da função validadora: obs.: Tem que ter o decorator @Injectable() e ser decarada no Module correspondente ao pipe específico como sendo um provider para assim ser possível usar a injeção de dependência.
+
+
+@Injectable()
+@ValidatorConstraint()
+export class NomedoValidador implements ValidatorConstraintInterface {
+
+  constructor(private usuarioService:  UsuarioService){
+  }
+
+  validate(nm_Nome: any, validationArguments?: ValidationArguments): boolean | Promise<boolean> {
+    return !!!this.usuarioService.Get_Buscar_User(nm_Nome)
+  }
+}
+
+
+obs.: a expressão !!! significa o inveso do literal da função
+
+
+4° No arquivo main.ts, certifique-se de que estaja usando a configuração, ela é essencial para o funcionamento do pipe:
+
+app.useGlobalPipes(new ValidationPipe({
+    transform: true
+  }));
+  useContainer(app.select(AppModule), {fallbackOnErrors: true});
+
+
+5° Depois disso basta ir no campo que deseja adicionar o pipe e inseir o decorator

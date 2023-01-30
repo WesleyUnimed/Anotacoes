@@ -1,0 +1,9 @@
+Adicionando fonts:
+
+Fonts: 
+
+Vá no google fontes => digite a fonte que deseja => clique na opção View all styles => selecione os tipos das fontes => copie o html no canto direito e cole dentro do index html da sua aplicação => cole as tags de preconnect o mais acima possível, ou seja, de baixo da tag meta. Dentro do arquivo tailwind.config (caso vc esteja utilizando) cole o seguinte código dentro de extend:
+
+fontFamily:{
+        sans: 'Inter, sans-serif'
+      }
