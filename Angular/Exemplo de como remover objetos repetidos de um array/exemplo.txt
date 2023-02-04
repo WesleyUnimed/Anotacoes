@@ -1,0 +1,11 @@
+this.calendariosAUX = Array.from(new Set(res.valorizacaoCalendarioDetalhe.map(s => s.nm_CodYDA)))
+                    .map(id => {
+                        return{
+                            competDe: res.valorizacaoCalendarioDetalhe.find(s => s.nm_CodYDA === id).competDe,
+                            competAte: res.valorizacaoCalendarioDetalhe.find(s => s.nm_CodYDA === id).competAte,
+                            dtExib: res.valorizacaoCalendarioDetalhe.find(s => s.nm_CodYDA === id).dtExib,
+                            paga: res.valorizacaoCalendarioDetalhe.find(s => s.nm_CodYDA === id).paga,
+                            nm_CodYDA: res.valorizacaoCalendarioDetalhe.find(s => s.nm_CodYDA === id).nm_CodYDA,
+                            index: 0
+                        }
+                    })

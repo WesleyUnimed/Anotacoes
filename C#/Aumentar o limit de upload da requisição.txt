@@ -1,0 +1,23 @@
+No meu caso eu estava utilizando uma requisição multpart-form, sendo assim:
+
+
+1° Adicione a seguinte linha de código dentro do arquivo Startup.cs => ConfigureService
+
+
+ services.Configure<FormOptions>(o =>  // currently all set to max, configure it to your needs!
+            {
+                o.ValueLengthLimit = int.MaxValue;
+                o.MultipartBodyLengthLimit = long.MaxValue; // <-- !!! long.MaxValue
+                o.MultipartBoundaryLengthLimit = int.MaxValue;
+                o.MultipartHeadersCountLimit = int.MaxValue;
+                o.MultipartHeadersLengthLimit = int.MaxValue;
+            });
+
+
+2° Em baixo da declaração rota que vai receber o upload, adicione a seguinte linha: [RequestSizeLimit(long.MaxValue)]  ex.:
+
+
+	   [HttpPost]
+        [Route("/v1/documentos")]
+        [RequestSizeLimit(long.MaxValue)]
+        [SwaggerResponse(200, null, typeof(Retorno))]

@@ -1,0 +1,4 @@
+Execute o comando: docker-compose up -d
+
+
+Esse comando é útil caso vc altere o arquivo docker-compose mas no portainer não exibir as alterações.
