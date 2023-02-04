@@ -1,0 +1,24 @@
+1° É nescessário instalar: npm i class-validator class-transformer
+
+2° Vá na classe model que vc deseja validar e adicone os decorators, ex.:
+
+
+ @IsNotEmpty({
+    message: 'nm_Nome é obrigatório!'
+  })
+  @IsString({
+    message: 'nm_Nome tem que ser do tipo string!'
+  })
+  nm_Nome: string
+
+ @IsEmail({},{
+    message: 'nm_Email tem que ser e-mail válido!'
+  })
+  nm_Email: string
+
+
+3° No main.ts adicione:
+
+app.useGlobalPipes(new ValidationPipe({
+    transform: true
+  }));

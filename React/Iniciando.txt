@@ -1,0 +1,21 @@
+Comando para criar uma aplicação React: 
+
+yarn create vite nomedoprojeto --template react.ts
+
+			ou
+
+npm create vite nomedoprojeto --template react.ts
+
+
+
+-----------------------------------------------------------------
+
+- Todo componente React é uma função que retorna HTML
+
+- Adicionar o pacote de roteamento: 
+
+	npm install react-router-dom@6
+
+		ou
+
+	yarn add react-router-dom@6

@@ -1,0 +1,42 @@
+comando vite: npm create vite@latest
+
+rodar o projeto: npm run dev
+
+______________________________________________________________________________
+Tailwind:
+
+npm install -D tailwindcss postcss autoprefixer
+
+comando para iniciar o tailwindcss: npx tailwindcss init -p
+
+______________________________________________________________________________
+
+Fonts: 
+
+vá no google fontes => digite a fonte que deseja => clique na opção View all styles => selecione os tipos das fontes => copie o html no canto direito e cole dentro do index html da sua aplicação => cole as tags de preconnect o mais acima possível, ou seja, de baixo da tag meta. Dentro do arquivo tailwind.config (caso vc esteja utilizando) cole o seguinte código dentro de extend:
+
+fontFamily:{
+        sans: 'Inter, sans-serif'
+      }
+
+______________________________________________________________________________
+
+Storybook:
+
+instalar: npx sb init --builder @storybook/builder-vite --use-npm
+
+rodar: npm run storybook
+
+______________________________________________________________________________
+clsx: (é um pacote que permite aplicar classes do tailwind de forma opcional)
+
+instalação: npm install --save clsx
+
+
+______________________________________________________________________________
+npm install @radix-ui/react-slot
+
+esse slot do radix é um utilitário que foi utilizado para alterar a tag do componente no html
+
+
+

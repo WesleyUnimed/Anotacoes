@@ -1,0 +1,14 @@
+
+instalar: npx sb init --builder @storybook/builder-vite --use-npm
+
+rodar: npm run storybook
+
+
+______________________________________________________________________
+
+Exclua o arquivo stories que é criado por padrão.Ele é como se fosse uma página de boas vindas.
+
+Dentro do arquivo main.cjs tem o caminho onde o storybook vai procurar os componente, verifique se está correto. "../src/**/*.stories.mdx"
+
+Dentro do arquivo preview.cjs, importe as configs do tailwind:
+import '../src/styles/global.css'
