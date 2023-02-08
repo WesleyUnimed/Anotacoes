@@ -1,4 +1,4 @@
-1° É nescessário instalar: npm i class-validator class-transformer
+1° É nescessário instalar: npm i class-validator
 
 2° Vá na classe model que vc deseja validar e adicone os decorators, ex.:
 

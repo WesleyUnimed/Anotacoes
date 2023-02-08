@@ -1,0 +1,31 @@
+Exemplo de uso do class-transformer:
+
+- Quero excluir um campo do retorno da minha api para que o usuário não consiga ver por exemplo a senha que foi digitada mas que consiga visualizar alguns outros campos. (Nesse caso o campo que for decorado com @Exclude não vai aparecer no retorno do Insomnia).
+
+- Quero tratar meus campos dentro do Nestjs em português porém quando forem trafegados quero que sejam em inglês.
+
+
+1° Como instalar: npm i class-transformer;
+
+2° Ele é usado na forma de decorators na tipagem dos dados. Ex.:
+
+@Expose({
+    name: 'name'   //determina como o campo vai ser exposto ao ser trafegado
+  })
+
+ @Exclude({
+    toPlainOnly: true  //Exclui o campo no momento da serialização (quando os dadas podem ser trafegados na rede)
+  })
+
+
+3° Para que essa tranformação funcione é necessário utilizar um interceptor que pode ser injetado dentro do App.module:
+
+import { ClassSerializerInterceptor } from '@nestjs/common/serializer';
+import { APP_INTERCEPTOR } from '@nestjs/core';
+
+providers: [
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: ClassSerializerInterceptor
+    }
+  ],
